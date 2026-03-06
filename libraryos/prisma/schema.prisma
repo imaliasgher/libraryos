@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  directUrl         = env("DIRECT_URL")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  password   String
+  role       String   @default("student") // "admin" | "student"
+  studentId  Int?     @unique
+  student    Student? @relation(fields: [studentId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Book {
+  id           Int           @id @default(autoincrement())
+  title        String
+  author       String
+  isbn         String        @unique
+  genre        String
+  cover        String        @default("📖")
+  total        Int           @default(1)
+  available    Int           @default(1)
+  year         Int
+  description  String        @default("")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  transactions Transaction[]
+}
+
+model Student {
+  id           Int           @id @default(autoincrement())
+  name         String
+  studentCode  String        @unique
+  email        String        @unique
+  phone        String        @default("")
+  department   String
+  year         Int           @default(1)
+  avatar       String        @default("")
+  joined       String
+  status       String        @default("active")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  transactions Transaction[]
+  user         User?
+}
+
+model Transaction {
+  id               Int      @id @default(autoincrement())
+  bookId           Int
+  bookTitle        String
+  studentId        Int
+  studentName      String
+  studentCode      String
+  type             String   // "issue" | "return"
+  date             String
+  dueDate          String
+  returnDate       String?
+  fine             Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  book             Book     @relation(fields: [bookId], references: [id])
+  student          Student  @relation(fields: [studentId], references: [id])
+}
