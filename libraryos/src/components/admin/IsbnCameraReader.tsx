@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { C } from "@/lib/tokens";
 
 type Html5 = import("html5-qrcode").Html5Qrcode;
+
+const CAMERA_STORAGE_KEY = "libraryos_barcode_camera_id";
 
 async function stopScanner(s: Html5 | null) {
   if (!s) return;
@@ -18,18 +21,89 @@ async function stopScanner(s: Html5 | null) {
   }
 }
 
+/** Ask for permission so device labels enumerate reliably (especially on mobile). */
+async function ensureVideoPermission(): Promise<void> {
+  if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) return;
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    stream.getTracks().forEach((t) => t.stop());
+  } catch {
+    /* user denied or no device — enumeration may still return entries on some browsers */
+  }
+}
+
+function resolveInitialCameraId(devices: Array<{ id: string; label: string }>): string {
+  if (!devices.length) return "";
+  try {
+    const saved = localStorage.getItem(CAMERA_STORAGE_KEY);
+    if (saved && devices.some((d) => d.id === saved)) return saved;
+  } catch {
+    /* private mode */
+  }
+  const back = devices.find((d) => /back|rear|environment|wide/i.test(d.label))?.id;
+  const fallback = back ?? (devices.length > 1 ? devices[devices.length - 1]!.id : devices[0]!.id);
+  try {
+    localStorage.setItem(CAMERA_STORAGE_KEY, fallback);
+  } catch {
+    /* ignore */
+  }
+  return fallback;
+}
+
 /**
- * Live 1D/2D barcode reader using the device camera.
- * Prefers the back camera (`facingMode: environment`), then label heuristics, then last listed device.
+ * Live 1D/2D barcode reader. Camera choice is persisted in localStorage as the default.
  */
 export function IsbnCameraReader({ elementId, onDecoded }: { elementId: string; onDecoded: (text: string) => void }) {
   const scannerRef = useRef<Html5 | null>(null);
   const onDecodedRef = useRef(onDecoded);
   const doneRef = useRef(false);
+  const [cameras, setCameras] = useState<Array<{ id: string; label: string }>>([]);
+  const [selectedId, setSelectedId] = useState("");
+  const [camerasReady, setCamerasReady] = useState(false);
+  const [listError, setListError] = useState<string | null>(null);
 
   onDecodedRef.current = onDecoded;
 
+  const handleCameraChange = useCallback((id: string) => {
+    try {
+      localStorage.setItem(CAMERA_STORAGE_KEY, id);
+    } catch {
+      /* ignore */
+    }
+    setSelectedId(id);
+  }, []);
+
+  // Enumerate cameras once
   useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setListError(null);
+      try {
+        await ensureVideoPermission();
+        const { Html5Qrcode } = await import("html5-qrcode");
+        const devices = await Html5Qrcode.getCameras();
+        if (cancelled) return;
+        setCameras(devices);
+        const initial = resolveInitialCameraId(devices);
+        setSelectedId(initial);
+      } catch (e) {
+        if (!cancelled) {
+          setListError("Could not list cameras.");
+          console.error(e);
+        }
+      } finally {
+        if (!cancelled) setCamerasReady(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Start / restart scanner when camera or mount key changes
+  useEffect(() => {
+    if (!camerasReady || !selectedId) return;
+
     doneRef.current = false;
     let cancelled = false;
 
@@ -66,24 +140,10 @@ export function IsbnCameraReader({ elementId, onDecoded }: { elementId: string; 
 
       const onErr = (_message: string, _error: unknown) => {};
 
-      const startWith = async (cameraIdOrConfig: string | MediaTrackConstraints) => {
-        await scanner.start(cameraIdOrConfig, config, onOk, onErr);
-      };
-
       try {
-        await startWith({ facingMode: "environment" });
-      } catch {
-        if (cancelled) return;
-        try {
-          const devices = await Html5Qrcode.getCameras();
-          if (!devices.length) return;
-          let camId = devices.find((d) => /back|rear|environment|wide/i.test(d.label))?.id;
-          if (!camId && devices.length > 1) camId = devices[devices.length - 1]!.id;
-          if (!camId) camId = devices[0]!.id;
-          await startWith(camId);
-        } catch (e) {
-          console.error("ISBN camera start failed", e);
-        }
+        await scanner.start(selectedId, config, onOk, onErr);
+      } catch (e) {
+        if (!cancelled) console.error("ISBN camera start failed", e);
       }
     };
 
@@ -94,21 +154,70 @@ export function IsbnCameraReader({ elementId, onDecoded }: { elementId: string; 
       void stopScanner(scannerRef.current);
       scannerRef.current = null;
     };
-  }, [elementId]);
+  }, [elementId, selectedId, camerasReady]);
 
   return (
-    <div
-      id={elementId}
-      style={{
-        width: "100%",
-        maxWidth: 420,
-        margin: "0 auto",
-        borderRadius: 16,
-        overflow: "hidden",
-        border: "2px solid #e8dfd4",
-        minHeight: 220,
-        background: "#0a0a0a",
-      }}
-    />
+    <div style={{ width: "100%", maxWidth: 420, margin: "0 auto" }}>
+      {camerasReady && cameras.length > 0 && (
+        <div
+          style={{
+            marginBottom: 10,
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            flexWrap: "wrap",
+          }}
+        >
+          <label htmlFor={`${elementId}-cam`} style={{ fontSize: 12, color: C.textMid, fontWeight: 700, flexShrink: 0 }}>
+            Camera
+          </label>
+          <select
+            id={`${elementId}-cam`}
+            value={selectedId}
+            onChange={(e) => handleCameraChange(e.target.value)}
+            style={{
+              flex: 1,
+              minWidth: 160,
+              maxWidth: "100%",
+              background: C.inputBg,
+              border: `1.5px solid ${C.inputBorder}`,
+              borderRadius: 10,
+              padding: "8px 12px",
+              color: C.text,
+              fontSize: 13,
+              fontFamily: "inherit",
+              cursor: "pointer",
+            }}
+          >
+            {cameras.map((c, i) => (
+              <option key={c.id} value={c.id}>
+                {c.label?.trim() || `Camera ${i + 1}`}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+      {listError && (
+        <div style={{ marginBottom: 8, fontSize: 12, color: C.red, fontWeight: 600 }}>{listError}</div>
+      )}
+      {camerasReady && cameras.length === 0 && !listError && (
+        <div style={{ marginBottom: 8, fontSize: 12, color: C.textMid }}>
+          No camera found. Allow camera access in the browser, then refresh.
+        </div>
+      )}
+      <div
+        id={elementId}
+        style={{
+          width: "100%",
+          maxWidth: 420,
+          margin: "0 auto",
+          borderRadius: 16,
+          overflow: "hidden",
+          border: "2px solid #e8dfd4",
+          minHeight: 220,
+          background: "#0a0a0a",
+        }}
+      />
+    </div>
   );
 }
