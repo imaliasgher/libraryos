@@ -13,6 +13,7 @@ import { AdminStudents }     from "@/components/admin/AdminStudents";
 import { AdminTransactions } from "@/components/admin/AdminTransactions";
 import { AdminReports }      from "@/components/admin/AdminReports";
 import { AdminScanner }      from "@/components/admin/AdminScanner";
+import { AdminSettings }     from "@/components/admin/AdminSettings";
 
 // Student pages
 import { StudentDashboard } from "@/components/student/StudentDashboard";
@@ -52,13 +53,7 @@ function AdminApp() {
       {page === "transactions" && <AdminTransactions />}
       {page === "reports"      && <AdminReports />}
       {page === "scanner"      && <AdminScanner />}
-      {(page === "settings") && (
-        <div style={{ textAlign: "center", padding: 100, color: C.textLight }}>
-          <div style={{ fontSize: 40, marginBottom: 16 }}>🚧</div>
-          <h3>Under Construction</h3>
-          <p>This module is coming soon.</p>
-        </div>
-      )}
+      {page === "settings"     && <AdminSettings />}
     </Shell>
   );
 }
