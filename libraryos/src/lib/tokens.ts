@@ -37,8 +37,7 @@ export const GENRES = [
   "Fantasy","Science Fiction","Coming-of-age","Adventure","Non-Fiction","Self-Help","Philosophy",
 ];
 export const DEPARTMENTS = [
-  "Computer Science","Literature","Physics","Mathematics",
-  "Economics","History","Engineering","Biology","Chemistry","Law",
+  "Nursery", "Pre-KG", "KG-1", "KG-2", "Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5",
 ];
 
 // helpers

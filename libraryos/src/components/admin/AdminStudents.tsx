@@ -39,11 +39,17 @@ export function AdminStudents() {
 
   const save = async () => {
     try {
+      let finalForm = { ...form };
+      if (!finalForm.email) {
+        // Auto-generate a dummy email for kids who don't have one
+        finalForm.email = `${finalForm.studentCode.toLowerCase()}@library.local`;
+      }
+
       if (modal === "add") {
-        if (!form.password || form.password.length < 6) return toast("Password must be at least 6 characters", "err");
-        await apiAddStudent(form);
+        if (!finalForm.password || finalForm.password.length < 4) return toast("Password must be at least 4 chars", "err");
+        await apiAddStudent(finalForm);
       } else {
-        await apiUpdateStudent(sel.id, form);
+        await apiUpdateStudent(sel.id, finalForm);
       }
       await load(); setModal(null); toast(modal === "add" ? "Student added!" : "Student updated!");
     } catch (e: any) { toast(e.message, "err"); }
@@ -69,13 +75,13 @@ export function AdminStudents() {
       <style>{`@media(max-width:560px){.stu-form-grid{grid-template-columns:1fr!important}}`}</style>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
         <div>
-          <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 28, color: C.text }}>Student Members</h1>
-          <p style={{ margin: "4px 0 0", color: C.textLight, fontSize: 13 }}>{students.length} registered members</p>
+          <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 28, color: C.text }}>Library Kids</h1>
+          <p style={{ margin: "4px 0 0", color: C.textLight, fontSize: 13 }}>{students.length} young readers registered</p>
         </div>
-        <Btn onClick={openAdd}>＋ Add Student</Btn>
+        <Btn onClick={openAdd}>🧒 Add Little Reader</Btn>
       </div>
 
-      <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍  Search name, ID, email, department…"
+      <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍  Search by name or Student ID..."
         style={{ background: C.cardBg, border: `1.5px solid ${C.inputBorder}`, borderRadius: 10, padding: "9px 14px", color: C.text, fontSize: 13, outline: "none", width: "100%", boxSizing: "border-box", fontFamily: "inherit" }} />
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(272px,1fr))", gap: 16 }}>
@@ -94,8 +100,8 @@ export function AdminStudents() {
                   <div style={{ marginTop: 4 }}><Badge color={s.status === "active" ? C.green : C.red}>{s.status}</Badge></div>
                 </div>
               </div>
-              <div style={{ color: C.textMid, fontSize: 12, marginBottom: 2 }}>🎓 {s.department}</div>
-              <div style={{ color: C.textMid, fontSize: 12, marginBottom: 12 }}>📧 {s.email}</div>
+              <div style={{ color: C.textMid, fontSize: 12, marginBottom: 2 }}>🧒 Class: {s.department}</div>
+              <div style={{ color: C.textMid, fontSize: 12, marginBottom: 12 }}>🔑 Log in with: {s.studentCode}</div>
               <div style={{ display: "flex", gap: 6 }} onClick={e => e.stopPropagation()}>
                 <Btn variant="ghost" style={{ flex: 1, padding: "7px 10px", fontSize: 12 }} onClick={() => openEdit(s)}>✏️ Edit</Btn>
                 <Btn variant={s.status === "active" ? "danger" : "success"} style={{ flex: 1, padding: "7px 10px", fontSize: 12, boxShadow: "none" }} onClick={() => toggle(s)}>{s.status === "active" ? "Suspend" : "Activate"}</Btn>
@@ -136,12 +142,12 @@ export function AdminStudents() {
         <Modal title={modal === "add" ? "Add Student" : "Edit Student"} onClose={() => setModal(null)}>
           <div className="stu-form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
             <div style={{ gridColumn: "1/-1" }}><FInput label="Full Name" value={form.name} onChange={(e: any) => setForm((f: any) => ({ ...f, name: e.target.value }))} /></div>
-            <FInput label="Student Code" value={form.studentCode} onChange={(e: any) => setForm((f: any) => ({ ...f, studentCode: e.target.value }))} />
-            <FInput label="Email" type="email" value={form.email} onChange={(e: any) => setForm((f: any) => ({ ...f, email: e.target.value }))} />
-            {modal === "add" && <FInput label="Password" type="password" value={form.password} onChange={(e: any) => setForm((f: any) => ({ ...f, password: e.target.value }))} />}
-            <FInput label="Phone" value={form.phone} onChange={(e: any) => setForm((f: any) => ({ ...f, phone: e.target.value }))} />
-            <FSelect label="Department" value={form.department} onChange={(e: any) => setForm((f: any) => ({ ...f, department: e.target.value }))}>{DEPARTMENTS.map(d => <option key={d}>{d}</option>)}</FSelect>
-            <FSelect label="Year" value={form.year} onChange={(e: any) => setForm((f: any) => ({ ...f, year: e.target.value }))}>{[1, 2, 3, 4, 5].map(y => <option key={y} value={y}>Year {y}</option>)}</FSelect>
+            <FInput label="Student ID (Badge Number)" value={form.studentCode} onChange={(e: any) => setForm((f: any) => ({ ...f, studentCode: e.target.value }))} />
+            <FInput label="Email (Optional for kids)" type="email" value={form.email} placeholder="Leave blank to auto-generate" onChange={(e: any) => setForm((f: any) => ({ ...f, email: e.target.value }))} />
+            {modal === "add" && <FInput label="Login Password" type="password" value={form.password} onChange={(e: any) => setForm((f: any) => ({ ...f, password: e.target.value }))} />}
+            <FInput label="Parent's Phone" value={form.phone} onChange={(e: any) => setForm((f: any) => ({ ...f, phone: e.target.value }))} />
+            <FSelect label="Class / Grade" value={form.department} onChange={(e: any) => setForm((f: any) => ({ ...f, department: e.target.value }))}>{DEPARTMENTS.map(d => <option key={d}>{d}</option>)}</FSelect>
+            <FSelect label="Reading Level" value={form.year} onChange={(e: any) => setForm((f: any) => ({ ...f, year: e.target.value }))}>{[1, 2, 3, 4, 5].map(y => <option key={y} value={y}>Level {y}</option>)}</FSelect>
             <FSelect label="Status" value={form.status} onChange={(e: any) => setForm((f: any) => ({ ...f, status: e.target.value }))}><option value="active">Active</option><option value="suspended">Suspended</option></FSelect>
             <FInput label="Join Date" type="date" value={form.joined} onChange={(e: any) => setForm((f: any) => ({ ...f, joined: e.target.value }))} />
           </div>

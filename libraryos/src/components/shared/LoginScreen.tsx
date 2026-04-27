@@ -7,17 +7,17 @@ import { useAuth } from "./AuthProvider";
 export function LoginScreen() {
   const { refresh } = useAuth();
   const [tab, setTab]       = useState<"admin" | "student">("admin");
-  const [email, setEmail]   = useState("");
+  const [ident, setIdent]   = useState("");
   const [pass, setPass]     = useState("");
   const [show, setShow]     = useState(false);
   const [err, setErr]       = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
-    if (!email || !pass) return setErr("Please enter email and password.");
+    if (!ident || !pass) return setErr("Please enter your ID and password.");
     setErr(""); setLoading(true);
     try {
-      await apiLogin(email, pass);
+      await apiLogin(ident, pass);
       await refresh();
     } catch (e: any) {
       setErr(e.message ?? "Login failed");
@@ -28,53 +28,53 @@ export function LoginScreen() {
 
   const demoFill = (who: "admin" | "student") => {
     setTab(who);
-    if (who === "admin")   { setEmail("admin@library.edu"); setPass("admin123"); }
-    else                   { setEmail("aarav@uni.edu");     setPass("aarav123"); }
+    if (who === "admin")   { setIdent("admin@library.edu"); setPass("admin123"); }
+    else                   { setIdent("STU001");            setPass("aarav123"); }
     setErr("");
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: C.pageBg, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+    <div style={{ minHeight: "100vh", background: "#fdf8f5", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
       <div style={{ width: "100%", maxWidth: 440 }}>
 
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: 36 }}>
-          <div style={{ width: 64, height: 64, background: `linear-gradient(135deg,${C.primary},${C.primaryDark})`, borderRadius: 20, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 30, boxShadow: `0 8px 24px ${C.primary}50`, marginBottom: 16 }}>📚</div>
-          <h1 style={{ fontFamily: "'Lora',serif", fontSize: 28, color: C.text, fontWeight: 700, margin: 0 }}>LibraryOS</h1>
-          <p style={{ color: C.textLight, fontSize: 14, marginTop: 6 }}>Sign in to your library portal</p>
+          <div style={{ width: 80, height: 80, background: `linear-gradient(135deg,${C.primary},${C.primaryDark})`, borderRadius: 28, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 40, boxShadow: `0 12px 32px ${C.primary}40`, marginBottom: 16 }}>📖</div>
+          <h1 style={{ fontFamily: "'Lora',serif", fontSize: 32, color: C.text, fontWeight: 800, margin: 0 }}>LibraryOS Kids</h1>
+          <p style={{ color: C.textLight, fontSize: 16, marginTop: 8 }}>Ready to read some stories? ✨</p>
         </div>
 
         {/* Card */}
-        <div style={{ background: C.cardBg, border: `1.5px solid ${C.cardBorder}`, borderRadius: 24, padding: 32, boxShadow: C.shadowLg }}>
+        <div style={{ background: "#fff", border: `2px solid ${C.cardBorder}`, borderRadius: 32, padding: 40, boxShadow: "0 20px 50px rgba(0,0,0,0.06)" }}>
 
           {/* Role tabs */}
-          <div style={{ display: "flex", background: C.inputBg, borderRadius: 12, padding: 4, marginBottom: 28, border: `1.5px solid ${C.inputBorder}` }}>
-            {([["admin", "🛡️ Admin"], ["student", "🎓 Student"]] as const).map(([k, l]) => (
-              <button key={k} onClick={() => { setTab(k); setErr(""); setEmail(""); setPass(""); }}
-                style={{ flex: 1, padding: "10px", border: "none", borderRadius: 9, cursor: "pointer", fontSize: 13, fontWeight: 700, fontFamily: "inherit", transition: "all 0.2s", background: tab === k ? "#fff" : "transparent", color: tab === k ? C.primaryDark : C.textMid, boxShadow: tab === k ? C.shadow : "none" }}>
+          <div style={{ display: "flex", background: C.inputBg, borderRadius: 16, padding: 6, marginBottom: 32, border: `1.5px solid ${C.inputBorder}` }}>
+            {([["admin", "👤 Admin"], ["student", "🎒 Student"]] as const).map(([k, l]) => (
+              <button key={k} onClick={() => { setTab(k); setErr(""); setIdent(""); setPass(""); }}
+                style={{ flex: 1, padding: "12px", border: "none", borderRadius: 12, cursor: "pointer", fontSize: 14, fontWeight: 800, fontFamily: "inherit", transition: "all 0.2s", background: tab === k ? C.primary : "transparent", color: tab === k ? "#fff" : C.textMid }}>
                 {l}
               </button>
             ))}
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            {/* Email */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-              <label style={{ color: C.textMid, fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.8 }}>Email address</label>
-              <input type="email" value={email} onChange={e => { setEmail(e.target.value); setErr(""); }} onKeyDown={e => e.key === "Enter" && handleLogin()}
-                placeholder={tab === "admin" ? "admin@library.edu" : "your@uni.edu"}
-                style={{ background: C.inputBg, border: `1.5px solid ${err ? C.red : C.inputBorder}`, borderRadius: 10, padding: "10px 14px", color: C.text, fontSize: 14, outline: "none", fontFamily: "inherit" }} />
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            {/* ID */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <label style={{ color: C.text, fontSize: 13, fontWeight: 700, marginLeft: 4 }}>{tab === "admin" ? "Email Address" : "Your Student ID"}</label>
+              <input type="text" value={ident} onChange={e => { setIdent(e.target.value); setErr(""); }} onKeyDown={e => e.key === "Enter" && handleLogin()}
+                placeholder={tab === "admin" ? "admin@library.edu" : "e.g. STU001"}
+                style={{ background: C.inputBg, border: `2px solid ${err ? C.red : C.inputBorder}`, borderRadius: 14, padding: "14px 18px", color: C.text, fontSize: 15, outline: "none", fontFamily: "inherit" }} />
             </div>
 
             {/* Password */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-              <label style={{ color: C.textMid, fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.8 }}>Password</label>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <label style={{ color: C.text, fontSize: 13, fontWeight: 700, marginLeft: 4 }}>Password</label>
               <div style={{ position: "relative" }}>
                 <input type={show ? "text" : "password"} value={pass} onChange={e => { setPass(e.target.value); setErr(""); }} onKeyDown={e => e.key === "Enter" && handleLogin()}
                   placeholder="••••••••"
-                  style={{ background: C.inputBg, border: `1.5px solid ${err ? C.red : C.inputBorder}`, borderRadius: 10, padding: "10px 44px 10px 14px", color: C.text, fontSize: 14, outline: "none", width: "100%", fontFamily: "inherit" }} />
+                  style={{ background: C.inputBg, border: `2px solid ${err ? C.red : C.inputBorder}`, borderRadius: 14, padding: "14px 50px 14px 18px", color: C.text, fontSize: 15, outline: "none", width: "100%", fontFamily: "inherit" }} />
                 <button onClick={() => setShow(s => !s)} type="button"
-                  style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: 16, color: C.textLight }}>{show ? "🙈" : "👁️"}</button>
+                  style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: 20, color: C.textLight }}>{show ? "🙈" : "👁️"}</button>
               </div>
             </div>
 

@@ -7,17 +7,24 @@ import { ok, err } from "@/lib/api";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await req.json();
-    if (!email || !password) return err("Email and password required");
+    const { identifier, password } = await req.json();
+    if (!identifier || !password) return err("ID and password required");
 
-    const user = await prisma.user.findUnique({
-      where: { email },
+    // Unified login: search by email OR student code
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: identifier },
+          { student: { studentCode: identifier } }
+        ]
+      },
       include: { student: true },
     });
-    if (!user) return err("Invalid credentials", 401);
+    
+    if (!user) return err("Invalid ID or password", 401);
 
     const valid = await bcrypt.compare(password, user.password);
-    if (!valid) return err("Invalid credentials", 401);
+    if (!valid) return err("Invalid ID or password", 401);
 
     if (user.role === "student" && user.student?.status === "suspended") {
       return err("Your account is suspended. Contact the library.", 403);

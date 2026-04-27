@@ -13,7 +13,7 @@ const j = (body: unknown) => ({
 });
 
 // Auth
-export const apiLogin   = (email: string, password: string) => req("/api/auth/login", { method: "POST", ...j({ email, password }) });
+export const apiLogin   = (identifier: string, password: string) => req("/api/auth/login", { method: "POST", ...j({ identifier, password }) });
 export const apiLogout  = () => req("/api/auth/logout", { method: "POST" });
 export const apiMe      = () => req<any>("/api/auth/me");
 

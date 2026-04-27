@@ -43,8 +43,8 @@ export function StudentCatalogue() {
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
       <ToastContainer />
       <div>
-        <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 28, color: C.text }}>Browse Catalogue</h1>
-        <p style={{ margin: "4px 0 0", color: C.textLight, fontSize: 13 }}>{books.filter(b => b.available > 0).length} books available right now</p>
+        <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 28, color: C.text }}>The Story Room</h1>
+        <p style={{ margin: "4px 0 0", color: C.textMid, fontSize: 15, fontWeight: 600 }}>Pick an adventure today! ✨ {books.filter(b => b.available > 0).length} stories are ready for you.</p>
       </div>
 
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>

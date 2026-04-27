@@ -40,11 +40,15 @@ export function StudentDashboard() {
       <ToastContainer />
 
       {/* Welcome banner */}
-      <div style={{ background: `linear-gradient(135deg,${C.primaryBg},${C.blueBg})`, border: `1.5px solid ${C.primary}25`, borderRadius: 22, padding: "24px 28px", display: "flex", alignItems: "center", gap: 20, boxShadow: C.shadow, flexWrap: "wrap" }}>
-        <div style={{ width: 60, height: 60, borderRadius: 18, background: `linear-gradient(135deg,${C.primary},${C.primaryDark})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, fontWeight: 800, color: "#fff", flexShrink: 0 }}>{user?.avatar}</div>
+      <div style={{ background: `linear-gradient(135deg,#fff8f0,#fff)`, border: `2px solid ${C.primary}25`, borderRadius: 24, padding: "28px", display: "flex", alignItems: "center", gap: 24, boxShadow: C.shadow, flexWrap: "wrap" }}>
+        <div style={{ width: 80, height: 80, borderRadius: 22, background: `linear-gradient(135deg,${C.primary},${C.primaryDark})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, fontWeight: 800, color: "#fff", flexShrink: 0, boxShadow: `0 8px 24px ${C.primary}30` }}>{user?.avatar}</div>
         <div style={{ flex: 1 }}>
-          <h2 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 24, color: C.text }}>Welcome back, {user?.name.split(" ")[0]}! 📖</h2>
-          <p style={{ margin: "4px 0 0", color: C.textMid, fontSize: 13 }}>{user?.department} · {user?.studentCode} · {new Date().toLocaleDateString("en-IN", { weekday: "long", month: "long", day: "numeric" })}</p>
+          <h2 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 28, color: C.text }}>Hi, {user?.name.split(" ")[0]}! 👋</h2>
+          <p style={{ margin: "4px 0 0", color: C.textMid, fontSize: 15, fontWeight: 600 }}>We love having you in our library! ✨</p>
+          <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
+            <Badge color={C.blue}>{user?.department}</Badge>
+            <Badge color={C.teal}>Level {user?.year}</Badge>
+          </div>
         </div>
         {totalFine > 0 && (
           <div style={{ background: C.redBg, border: `1.5px solid ${C.red}30`, borderRadius: 14, padding: "12px 18px", textAlign: "center" }}>
@@ -55,17 +59,17 @@ export function StudentDashboard() {
       </div>
 
       {/* Stats */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 16 }}>
-        <StatCard icon="📚" label="Books Issued"  value={active.length}   sub="currently active"              color={C.primary} bg={C.primaryBg} />
-        <StatCard icon="⚠️" label="Overdue"       value={overdue.length}  sub={overdue.length > 0 ? "pay fines soon" : "you're on track!"} color={overdue.length > 0 ? C.red : C.green} bg={overdue.length > 0 ? C.redBg : C.greenBg} />
-        <StatCard icon="📖" label="Total Borrowed" value={txs.length}     sub="all time"                      color={C.amber}   bg={C.amberBg} />
-        <StatCard icon="✅" label="Returned"       value={history.length}  sub="books returned"               color={C.teal}    bg={C.tealBg} />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 20 }}>
+        <StatCard icon="🎒" label="My Reading Books"  value={active.length}   sub="books with me"     color={C.primary} bg={C.primaryBg} />
+        <StatCard icon={overdue.length > 0 ? "⏰" : "⭐"} label={overdue.length > 0 ? "Return soon!" : "Star Reader"} value={overdue.length > 0 ? overdue.length : "Yes!"} sub={overdue.length > 0 ? "please bring back" : "all turned in!"} color={overdue.length > 0 ? C.red : C.green} bg={overdue.length > 0 ? C.redBg : C.greenBg} />
+        <StatCard icon="📚" label="Stories Read" value={txs.length}     sub="total adventures" color={C.amber}   bg={C.amberBg} />
+        <StatCard icon="🎉" label="Return History" value={history.length}  sub="well done!"       color={C.teal}    bg={C.tealBg} />
       </div>
 
       {/* Active loans */}
       {active.length > 0 && (
-        <div style={{ background: C.cardBg, border: `1.5px solid ${C.cardBorder}`, borderRadius: 18, padding: 22, boxShadow: C.shadow }}>
-          <h3 style={{ margin: "0 0 16px", color: C.text, fontSize: 16, fontFamily: "'Lora',serif", fontWeight: 600 }}>📤 Currently Borrowed</h3>
+        <div style={{ background: C.cardBg, border: `2px solid ${C.cardBorder}`, borderRadius: 24, padding: 24, boxShadow: C.shadow }}>
+          <h3 style={{ margin: "0 0 16px", color: C.text, fontSize: 18, fontFamily: "'Lora',serif", fontWeight: 700 }}>🏠 Books at Home</h3>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(290px,1fr))", gap: 12 }}>
             {active.map(tx => {
               const book = books.find(b => b.id === tx.bookId);
@@ -93,9 +97,9 @@ export function StudentDashboard() {
       )}
 
       {/* Suggested books */}
-      <div style={{ background: C.cardBg, border: `1.5px solid ${C.cardBorder}`, borderRadius: 18, padding: 22, boxShadow: C.shadow }}>
+      <div style={{ background: C.cardBg, border: `2px solid ${C.cardBorder}`, borderRadius: 24, padding: 24, boxShadow: C.shadow }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-          <h3 style={{ margin: 0, color: C.text, fontSize: 16, fontFamily: "'Lora',serif", fontWeight: 600 }}>✨ Available to Borrow</h3>
+          <h3 style={{ margin: 0, color: C.text, fontSize: 18, fontFamily: "'Lora',serif", fontWeight: 700 }}>✨ Find your next story!</h3>
           <Badge color={C.primary}>{books.filter(b => b.available > 0).length} books</Badge>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(220px,1fr))", gap: 12 }}>

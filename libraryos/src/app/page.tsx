@@ -63,10 +63,10 @@ function StudentApp() {
   const [page, setPage] = useState("dashboard");
 
   const nav = [
-    { key: "dashboard", icon: "🏠", label: "Home" },
-    { key: "catalogue", icon: "📚", label: "Browse Books" },
-    { key: "mybooks",   icon: "📖", label: "My Books" },
-    { key: "fines",     icon: "💰", label: "Fines & Dues" },
+    { key: "dashboard", icon: "🏠", label: "My Library" },
+    { key: "catalogue", icon: "📚", label: "Story Room" },
+    { key: "mybooks",   icon: "📖", label: "My Bag" },
+    { key: "fines",     icon: "💰", label: "Reminders" },
     { key: "profile",   icon: "👤", label: "My Profile" },
   ];
 

@@ -26,8 +26,8 @@ export function StudentFines() {
         }
       `}</style>
       <div>
-        <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 28, color: C.text }}>Fines & Dues</h1>
-        <p style={{ margin: "4px 0 0", color: C.textLight, fontSize: 13 }}>Track your overdue charges</p>
+        <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 28, color: C.text }}>Library Reminders</h1>
+        <p style={{ margin: "4px 0 0", color: C.textMid, fontSize: 15, fontWeight: 600 }}>Important notes about our story adventures! 🎈</p>
       </div>
 
       <div className="fines-stat-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14 }}>
