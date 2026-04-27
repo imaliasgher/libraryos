@@ -12,6 +12,7 @@ import { AdminBooks }        from "@/components/admin/AdminBooks";
 import { AdminStudents }     from "@/components/admin/AdminStudents";
 import { AdminTransactions } from "@/components/admin/AdminTransactions";
 import { AdminReports }      from "@/components/admin/AdminReports";
+import { AdminScanner }      from "@/components/admin/AdminScanner";
 
 // Student pages
 import { StudentDashboard } from "@/components/student/StudentDashboard";
@@ -26,14 +27,16 @@ function AdminApp() {
 
   const nav = [
     { key: "dashboard",    icon: "🏠", label: "Dashboard" },
-    { key: "books",        icon: "📚", label: "Books" },
-    { key: "students",     icon: "🎓", label: "Students" },
-    { key: "transactions", icon: "🔄", label: "Transactions" },
+    { key: "books",        icon: "📚", label: "Book Catalogue" },
+    { key: "students",     icon: "🎓", label: "Members" },
+    { key: "transactions", icon: "🔄", label: "Issue / Return" },
+    { key: "scanner",      icon: "📷", label: "QR Scanner" },
     { key: "reports",      icon: "📊", label: "Reports" },
+    { key: "settings",     icon: "⚙️", label: "Settings" },
   ];
 
   const sidebarBottom = (
-    <div style={{ padding: "0 14px 12px" }}>
+    <div style={{ padding: "0 14px 12px", marginTop: 24 }}>
       <div style={{ background: C.primaryBg, border: `1.5px solid ${C.primary}22`, borderRadius: 14, padding: "12px 14px" }}>
         <div style={{ color: C.textLight, fontSize: 10, textTransform: "uppercase" as const, letterSpacing: 1, marginBottom: 8, fontWeight: 700 }}>Admin Controls</div>
         <div style={{ color: C.textMid, fontSize: 11 }}>Manage books, students, and transactions from the sidebar.</div>
@@ -48,6 +51,14 @@ function AdminApp() {
       {page === "students"     && <AdminStudents />}
       {page === "transactions" && <AdminTransactions />}
       {page === "reports"      && <AdminReports />}
+      {page === "scanner"      && <AdminScanner />}
+      {(page === "settings") && (
+        <div style={{ textAlign: "center", padding: 100, color: C.textLight }}>
+          <div style={{ fontSize: 40, marginBottom: 16 }}>🚧</div>
+          <h3>Under Construction</h3>
+          <p>This module is coming soon.</p>
+        </div>
+      )}
     </Shell>
   );
 }

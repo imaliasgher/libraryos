@@ -22,6 +22,7 @@ export const apiBooks       = () => req<any[]>("/api/books");
 export const apiAddBook     = (data: any) => req<any>("/api/books", { method: "POST", ...j(data) });
 export const apiUpdateBook  = (id: number, data: any) => req<any>(`/api/books/${id}`, { method: "PUT", ...j(data) });
 export const apiDeleteBook  = (id: number) => req<any>(`/api/books/${id}`, { method: "DELETE" });
+export const apiScanIsbn    = (isbn: string) => req<any>(`/api/scan?isbn=${isbn}`);
 
 // Students
 export const apiStudents      = () => req<any[]>("/api/students");

@@ -76,32 +76,62 @@ export function AdminBooks() {
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(248px,1fr))", gap: 16 }}>
-        {filtered.map((book, i) => {
-          const bc = ACCENT_COLORS[i % ACCENT_COLORS.length];
-          const bb = ACCENT_BGS[i % ACCENT_BGS.length];
-          return (
-            <div key={book.id} onClick={() => openDetail(book)}
-              style={{ background: C.cardBg, border: `1.5px solid ${C.cardBorder}`, borderTop: `4px solid ${bc}`, borderRadius: 18, padding: 20, cursor: "pointer", transition: "all 0.2s", boxShadow: C.shadow }}
-              onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = C.shadowMd; (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = C.shadow; (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)"; }}>
-              <div style={{ width: 52, height: 52, borderRadius: 14, background: bb, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, marginBottom: 12 }}>{book.cover}</div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                <Badge color={book.available > 0 ? C.green : C.red}>{book.available > 0 ? `${book.available} avail.` : "All out"}</Badge>
-                <span style={{ color: C.textLight, fontSize: 11 }}>{book.year > 0 ? book.year : `${Math.abs(book.year)} BC`}</span>
-              </div>
-              <div style={{ color: C.text, fontWeight: 700, fontSize: 15, marginBottom: 3, lineHeight: 1.3 }}>{book.title}</div>
-              <div style={{ color: C.textMid, fontSize: 12, marginBottom: 8 }}>by {book.author}</div>
-              <div style={{ color: C.textLight, fontSize: 11, marginBottom: 14, lineHeight: 1.5 }}>{book.description?.substring(0, 70)}…</div>
-              <Badge color={bc}>{book.genre}</Badge>
-              <div style={{ display: "flex", gap: 6, marginTop: 14 }} onClick={e => e.stopPropagation()}>
-                <Btn variant="primary" style={{ flex: 1, padding: "8px 10px", fontSize: 12, boxShadow: "none" }} onClick={() => openIssue(book)} disabled={book.available < 1}>Issue</Btn>
-                <Btn variant="ghost" style={{ padding: "8px 10px", fontSize: 12 }} onClick={() => openEdit(book)}>✏️</Btn>
-                <Btn variant="danger" style={{ padding: "8px 10px", fontSize: 12, boxShadow: "none" }} onClick={() => delBook(book.id)}>🗑️</Btn>
-              </div>
-            </div>
-          );
-        })}
+      <div style={{ background: C.cardBg, borderRadius: 16, border: `1.5px solid ${C.cardBorder}`, overflow: "hidden", boxShadow: C.shadow }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+          <thead>
+            <tr style={{ background: C.inputBg, borderBottom: `1.5px solid ${C.cardBorder}` }}>
+              <th style={{ padding: "16px 20px", color: C.textMid, fontSize: 13, fontWeight: 700, width: "35%" }}>Title</th>
+              <th style={{ padding: "16px 20px", color: C.textMid, fontSize: 13, fontWeight: 700, width: "20%" }}>Author</th>
+              <th style={{ padding: "16px 20px", color: C.textMid, fontSize: 13, fontWeight: 700, width: "15%" }}>Category</th>
+              <th style={{ padding: "16px 20px", color: C.textMid, fontSize: 13, fontWeight: 700, width: "15%" }}>Status</th>
+              <th style={{ padding: "16px 20px", color: C.textMid, fontSize: 13, fontWeight: 700, width: "15%", textAlign: "right" }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((book, i) => {
+              const bc = ACCENT_COLORS[i % ACCENT_COLORS.length];
+              const bb = ACCENT_BGS[i % ACCENT_BGS.length];
+              return (
+                <tr key={book.id} onClick={() => openDetail(book)} style={{ borderBottom: `1px solid ${C.cardBorder}`, cursor: "pointer", transition: "background 0.2s" }} onMouseEnter={e => e.currentTarget.style.background = C.pageBg} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                  <td style={{ padding: "16px 20px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                      <div style={{ width: 44, height: 44, borderRadius: 12, background: bb, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>{book.cover}</div>
+                      <div>
+                        <div style={{ color: C.text, fontWeight: 700, fontSize: 14, marginBottom: 2 }}>{book.title}</div>
+                        <div style={{ color: C.textLight, fontSize: 11, fontFamily: "monospace" }}>ISBN: {book.isbn}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td style={{ padding: "16px 20px", color: C.textMid, fontSize: 13, fontWeight: 500 }}>{book.author}</td>
+                  <td style={{ padding: "16px 20px" }}>
+                    <Badge color={bc}>{book.genre}</Badge>
+                  </td>
+                  <td style={{ padding: "16px 20px" }}>
+                    {book.available > 0 ? (
+                      <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: C.greenBg, color: C.green, padding: "4px 10px", borderRadius: 20, fontSize: 11, fontWeight: 700, border: `1px solid ${C.green}25` }}>
+                        <span style={{ width: 6, height: 6, borderRadius: "50%", background: C.green }} /> Available ({book.available})
+                      </div>
+                    ) : (
+                      <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: C.redBg, color: C.red, padding: "4px 10px", borderRadius: 20, fontSize: 11, fontWeight: 700, border: `1px solid ${C.red}25` }}>
+                        <span style={{ width: 6, height: 6, borderRadius: "50%", background: C.red }} /> Out of stock
+                      </div>
+                    )}
+                  </td>
+                  <td style={{ padding: "16px 20px", textAlign: "right" }} onClick={e => e.stopPropagation()}>
+                    <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+                      <button onClick={() => openIssue(book)} disabled={book.available < 1} style={{ background: C.text, color: "#fff", border: "none", padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: book.available < 1 ? "not-allowed" : "pointer", opacity: book.available < 1 ? 0.3 : 1, transition: "transform 0.1s" }} onMouseDown={(e: any) => e.currentTarget.style.transform = "scale(0.95)"}>Issue</button>
+                      <button onClick={() => openEdit(book)} style={{ background: C.inputBg, border: `1.5px solid ${C.inputBorder}`, padding: "6px 8px", borderRadius: 8, cursor: "pointer", fontSize: 13 }}>✏️</button>
+                      <button onClick={() => delBook(book.id)} style={{ background: C.redBg, border: `1.5px solid ${C.red}35`, padding: "6px 8px", borderRadius: 8, cursor: "pointer", fontSize: 13 }}>🗑️</button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        {filtered.length === 0 && (
+          <div style={{ padding: 40, textAlign: "center", color: C.textLight }}>No books found matching your criteria.</div>
+        )}
       </div>
 
       {/* Detail modal */}

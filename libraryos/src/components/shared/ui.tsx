@@ -12,7 +12,7 @@ export function Badge({ children, color, bg }: { children: ReactNode; color: str
 }
 
 // ── StatCard ───────────────────────────────────────────────────────────────
-export function StatCard({ icon, label, value, sub, color, bg }: { icon: string; label: string; value: string | number; sub?: string; color: string; bg: string }) {
+export function StatCard({ icon, label, value, sub, color, bg }: { icon: string; label: string; value: string | number; sub?: ReactNode; color: string; bg: string }) {
   return (
     <div style={{ background: bg, border: `1.5px solid ${color}28`, borderRadius: 18, padding: "20px 22px", position: "relative", overflow: "hidden", boxShadow: C.shadow }}>
       <div style={{ position: "absolute", top: -14, right: -14, width: 70, height: 70, background: color, borderRadius: "50%", opacity: 0.12 }} />
