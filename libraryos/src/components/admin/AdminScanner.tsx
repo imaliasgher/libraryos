@@ -66,7 +66,7 @@ export function AdminScanner() {
       if (res.exists) {
         setBookData(res.book);
         setStatus("found");
-        toast("Book located in inventory!");
+        toast("📦 Book found in your library inventory!");
       } else {
         const meta = res.metadata || { title: "", author: "", year: new Date().getFullYear(), description: "", genre: "General", cover: "📖", thumbnail: null, publisher: "", pageCount: null };
         setForm({
@@ -76,7 +76,12 @@ export function AdminScanner() {
           publisher: meta.publisher, pageCount: meta.pageCount,
         });
         setStatus("new");
-        toast(res.metadata ? `✅ Found: "${meta.title}" — Confirm & save below.` : "ISBN not found in Google Books. Enter details manually.", "ok");
+        if (res.metadata) {
+          const sourceIcon = meta.source === "Open Library" ? "📖" : "🔍";
+          toast(`${sourceIcon} Metadata from ${meta.source} — review & save below.`, "ok");
+        } else {
+          toast("⚠️ Not found in Google Books or Open Library. Fill in details manually.", "ok");
+        }
       }
     } catch (err: any) {
       toast(err.message || "Failed to scan", "err");
@@ -185,13 +190,23 @@ export function AdminScanner() {
         </div>
       ) : status === "new" ? (
         <div style={{ background: C.cardBg, border: `1.5px solid ${C.cardBorder}`, borderRadius: 20, padding: 30, boxShadow: C.shadow }}>
-          <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 20 }}>
-            <div style={{ background: C.primary, color: "#fff", width: 24, height: 24, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12 }}>✨</div>
+          <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 20, flexWrap: "wrap" }}>
+            <div style={{ background: C.primary, color: "#fff", width: 24, height: 24, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, flexShrink: 0 }}>✨</div>
             <div style={{ color: C.primaryDark, fontWeight: 700, fontSize: 16 }}>New Book Discovery</div>
-            <div style={{ color: C.textMid, fontSize: 13, marginLeft: "auto" }}>ISBN: {isbn}</div>
+            {form.source && (
+              <span style={{ background: form.source === "Open Library" ? C.greenBg : C.primaryBg, color: form.source === "Open Library" ? C.green : C.primaryDark, border: `1px solid ${form.source === "Open Library" ? C.green : C.primary}30`, borderRadius: 20, padding: "2px 10px", fontSize: 11, fontWeight: 700 }}>
+                via {form.source}
+              </span>
+            )}
+            {!form.source && (
+              <span style={{ background: C.amberBg, color: C.amber, border: `1px solid ${C.amber}30`, borderRadius: 20, padding: "2px 10px", fontSize: 11, fontWeight: 700 }}>
+                Manual Entry
+              </span>
+            )}
+            <div style={{ color: C.textMid, fontSize: 12, marginLeft: "auto" }}>ISBN: {isbn}</div>
           </div>
 
-          {/* Google Books Preview Card */}
+          {/* Book metadata preview card */}
           {(form.thumbnail || form.title) && (
             <div style={{ display: "flex", gap: 18, padding: 18, background: C.primaryBg, borderRadius: 16, border: `1.5px solid ${C.primary}20`, marginBottom: 20, alignItems: "flex-start" }}>
               {form.thumbnail ? (
