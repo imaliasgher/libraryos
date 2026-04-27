@@ -25,6 +25,11 @@ export function AdminSettings() {
   return (
     <div style={{ maxWidth: 700, margin: "0 auto", padding: "10px 0" }}>
       <ToastContainer />
+      <style>{`
+        @media (max-width: 640px) {
+          .settings-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
       
       <div style={{ marginBottom: 30 }}>
         <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 28, color: C.text }}>System Settings</h1>
@@ -36,7 +41,7 @@ export function AdminSettings() {
         {/* Profile Settings Segment */}
         <div style={{ background: C.cardBg, border: `1.5px solid ${C.cardBorder}`, borderRadius: 18, padding: 30, boxShadow: C.shadow }}>
           <h2 style={{ fontSize: 18, margin: "0 0 20px", color: C.text }}>Admin Profile</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <div className="settings-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
             <FInput label="Admin Email" value="admin@library.edu" disabled style={{ opacity: 0.6 }} />
             <FInput label="Library Name" value="University Open Library" onChange={() => {}} />
             <FInput label="Time Zone" value="Asia/Kolkata" disabled style={{ opacity: 0.6 }} />
@@ -49,7 +54,7 @@ export function AdminSettings() {
         {/* Global Policy Settings */}
         <div style={{ background: C.cardBg, border: `1.5px solid ${C.cardBorder}`, borderRadius: 18, padding: 30, boxShadow: C.shadow }}>
           <h2 style={{ fontSize: 18, margin: "0 0 20px", color: C.text }}>Lending Policies</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <div className="settings-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
             <FInput label="Default Borrow Period (Days)" type="number" value="30" onChange={() => {}} />
             <FInput label="Daily Overdue Fine (₹)" type="number" value="10" onChange={() => {}} />
             <FInput label="Max Books Per Student" type="number" value="5" onChange={() => {}} />

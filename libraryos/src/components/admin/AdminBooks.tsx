@@ -56,10 +56,11 @@ export function AdminBooks() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+      <style>{`@media(max-width:560px){.book-form-grid{grid-template-columns:1fr!important}}`}</style>
       <ToastContainer />
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
         <div>
-          <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 28, color: C.text }}>Book Inventory</h1>
+          <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 26, color: C.text }}>Book Inventory</h1>
           <p style={{ margin: "4px 0 0", color: C.textLight, fontSize: 13 }}>{books.length} titles · {books.reduce((a, b) => a + b.total, 0)} total copies</p>
         </div>
         <Btn onClick={openAdd}>＋ Add Book</Btn>
@@ -67,68 +68,68 @@ export function AdminBooks() {
 
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
         <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍  Search title, author, ISBN…"
-          style={{ background: C.cardBg, border: `1.5px solid ${C.inputBorder}`, borderRadius: 10, padding: "9px 14px", color: C.text, fontSize: 13, outline: "none", flex: 1, minWidth: 180, fontFamily: "inherit" }} />
+          style={{ background: C.cardBg, border: `1.5px solid ${C.inputBorder}`, borderRadius: 10, padding: "9px 14px", color: C.text, fontSize: 13, outline: "none", flex: 1, minWidth: 160, fontFamily: "inherit" }} />
         <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
           {["All", "Dystopian", "Fantasy", "Classic Fiction", "Non-Fiction", "Self-Help", "Romance"].map(g => (
             <button key={g} onClick={() => setGenre(g)}
-              style={{ background: genre === g ? C.primary : C.cardBg, border: `1.5px solid ${genre === g ? C.primary : C.inputBorder}`, color: genre === g ? "#fff" : C.textMid, borderRadius: 8, padding: "7px 13px", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>{g}</button>
+              style={{ background: genre === g ? C.primary : C.cardBg, border: `1.5px solid ${genre === g ? C.primary : C.inputBorder}`, color: genre === g ? "#fff" : C.textMid, borderRadius: 8, padding: "7px 11px", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>{g}</button>
           ))}
         </div>
       </div>
 
       <div style={{ background: C.cardBg, borderRadius: 16, border: `1.5px solid ${C.cardBorder}`, overflow: "hidden", boxShadow: C.shadow }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
-          <thead>
-            <tr style={{ background: C.inputBg, borderBottom: `1.5px solid ${C.cardBorder}` }}>
-              <th style={{ padding: "16px 20px", color: C.textMid, fontSize: 13, fontWeight: 700, width: "35%" }}>Title</th>
-              <th style={{ padding: "16px 20px", color: C.textMid, fontSize: 13, fontWeight: 700, width: "20%" }}>Author</th>
-              <th style={{ padding: "16px 20px", color: C.textMid, fontSize: 13, fontWeight: 700, width: "15%" }}>Category</th>
-              <th style={{ padding: "16px 20px", color: C.textMid, fontSize: 13, fontWeight: 700, width: "15%" }}>Status</th>
-              <th style={{ padding: "16px 20px", color: C.textMid, fontSize: 13, fontWeight: 700, width: "15%", textAlign: "right" }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((book, i) => {
-              const bc = ACCENT_COLORS[i % ACCENT_COLORS.length];
-              const bb = ACCENT_BGS[i % ACCENT_BGS.length];
-              return (
-                <tr key={book.id} onClick={() => openDetail(book)} style={{ borderBottom: `1px solid ${C.cardBorder}`, cursor: "pointer", transition: "background 0.2s" }} onMouseEnter={e => e.currentTarget.style.background = C.pageBg} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                  <td style={{ padding: "16px 20px" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                      <div style={{ width: 44, height: 44, borderRadius: 12, background: bb, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>{book.cover}</div>
-                      <div>
-                        <div style={{ color: C.text, fontWeight: 700, fontSize: 14, marginBottom: 2 }}>{book.title}</div>
-                        <div style={{ color: C.textLight, fontSize: 11, fontFamily: "monospace" }}>ISBN: {book.isbn}</div>
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: 580 }}>
+            <thead>
+              <tr style={{ background: C.inputBg, borderBottom: `1.5px solid ${C.cardBorder}` }}>
+                <th style={{ padding: "14px 16px", color: C.textMid, fontSize: 12, fontWeight: 700, width: "35%" }}>Title</th>
+                <th style={{ padding: "14px 16px", color: C.textMid, fontSize: 12, fontWeight: 700, width: "20%" }}>Author</th>
+                <th style={{ padding: "14px 16px", color: C.textMid, fontSize: 12, fontWeight: 700, width: "15%" }}>Category</th>
+                <th style={{ padding: "14px 16px", color: C.textMid, fontSize: 12, fontWeight: 700, width: "15%" }}>Status</th>
+                <th style={{ padding: "14px 16px", color: C.textMid, fontSize: 12, fontWeight: 700, width: "15%", textAlign: "right" }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((book, i) => {
+                const bc = ACCENT_COLORS[i % ACCENT_COLORS.length];
+                const bb = ACCENT_BGS[i % ACCENT_BGS.length];
+                return (
+                  <tr key={book.id} onClick={() => openDetail(book)} style={{ borderBottom: `1px solid ${C.cardBorder}`, cursor: "pointer", transition: "background 0.2s" }} onMouseEnter={e => e.currentTarget.style.background = C.pageBg} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                    <td style={{ padding: "13px 16px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
+                        <div style={{ width: 38, height: 38, borderRadius: 10, background: bb, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 19, flexShrink: 0 }}>{book.cover}</div>
+                        <div>
+                          <div style={{ color: C.text, fontWeight: 700, fontSize: 13, marginBottom: 2 }}>{book.title}</div>
+                          <div style={{ color: C.textLight, fontSize: 11, fontFamily: "monospace" }}>ISBN: {book.isbn}</div>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td style={{ padding: "16px 20px", color: C.textMid, fontSize: 13, fontWeight: 500 }}>{book.author}</td>
-                  <td style={{ padding: "16px 20px" }}>
-                    <Badge color={bc}>{book.genre}</Badge>
-                  </td>
-                  <td style={{ padding: "16px 20px" }}>
-                    {book.available > 0 ? (
-                      <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: C.greenBg, color: C.green, padding: "4px 10px", borderRadius: 20, fontSize: 11, fontWeight: 700, border: `1px solid ${C.green}25` }}>
-                        <span style={{ width: 6, height: 6, borderRadius: "50%", background: C.green }} /> Available ({book.available})
+                    </td>
+                    <td style={{ padding: "13px 16px", color: C.textMid, fontSize: 13 }}>{book.author}</td>
+                    <td style={{ padding: "13px 16px" }}><Badge color={bc}>{book.genre}</Badge></td>
+                    <td style={{ padding: "13px 16px" }}>
+                      {book.available > 0 ? (
+                        <div style={{ display: "inline-flex", alignItems: "center", gap: 5, background: C.greenBg, color: C.green, padding: "3px 9px", borderRadius: 20, fontSize: 11, fontWeight: 700, border: `1px solid ${C.green}25`, whiteSpace: "nowrap" }}>
+                          <span style={{ width: 5, height: 5, borderRadius: "50%", background: C.green }} /> {book.available} avail.
+                        </div>
+                      ) : (
+                        <div style={{ display: "inline-flex", alignItems: "center", gap: 5, background: C.redBg, color: C.red, padding: "3px 9px", borderRadius: 20, fontSize: 11, fontWeight: 700, border: `1px solid ${C.red}25`, whiteSpace: "nowrap" }}>
+                          <span style={{ width: 5, height: 5, borderRadius: "50%", background: C.red }} /> Out of stock
+                        </div>
+                      )}
+                    </td>
+                    <td style={{ padding: "13px 16px", textAlign: "right" }} onClick={e => e.stopPropagation()}>
+                      <div style={{ display: "flex", gap: 5, justifyContent: "flex-end", flexWrap: "nowrap" }}>
+                        <button onClick={() => openIssue(book)} disabled={book.available < 1} style={{ background: C.text, color: "#fff", border: "none", padding: "5px 10px", borderRadius: 7, fontSize: 11, fontWeight: 600, cursor: book.available < 1 ? "not-allowed" : "pointer", opacity: book.available < 1 ? 0.3 : 1, whiteSpace: "nowrap" }}>Issue</button>
+                        <button onClick={() => openEdit(book)} style={{ background: C.inputBg, border: `1.5px solid ${C.inputBorder}`, padding: "5px 7px", borderRadius: 7, cursor: "pointer", fontSize: 12 }}>✏️</button>
+                        <button onClick={() => delBook(book.id)} style={{ background: C.redBg, border: `1.5px solid ${C.red}35`, padding: "5px 7px", borderRadius: 7, cursor: "pointer", fontSize: 12 }}>🗑️</button>
                       </div>
-                    ) : (
-                      <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: C.redBg, color: C.red, padding: "4px 10px", borderRadius: 20, fontSize: 11, fontWeight: 700, border: `1px solid ${C.red}25` }}>
-                        <span style={{ width: 6, height: 6, borderRadius: "50%", background: C.red }} /> Out of stock
-                      </div>
-                    )}
-                  </td>
-                  <td style={{ padding: "16px 20px", textAlign: "right" }} onClick={e => e.stopPropagation()}>
-                    <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-                      <button onClick={() => openIssue(book)} disabled={book.available < 1} style={{ background: C.text, color: "#fff", border: "none", padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: book.available < 1 ? "not-allowed" : "pointer", opacity: book.available < 1 ? 0.3 : 1, transition: "transform 0.1s" }} onMouseDown={(e: any) => e.currentTarget.style.transform = "scale(0.95)"}>Issue</button>
-                      <button onClick={() => openEdit(book)} style={{ background: C.inputBg, border: `1.5px solid ${C.inputBorder}`, padding: "6px 8px", borderRadius: 8, cursor: "pointer", fontSize: 13 }}>✏️</button>
-                      <button onClick={() => delBook(book.id)} style={{ background: C.redBg, border: `1.5px solid ${C.red}35`, padding: "6px 8px", borderRadius: 8, cursor: "pointer", fontSize: 13 }}>🗑️</button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
         {filtered.length === 0 && (
           <div style={{ padding: 40, textAlign: "center", color: C.textLight }}>No books found matching your criteria.</div>
         )}
@@ -155,7 +156,7 @@ export function AdminBooks() {
       {/* Add/Edit modal */}
       {(modal === "add" || modal === "edit") && (
         <Modal title={modal === "add" ? "Add New Book" : "Edit Book"} onClose={() => setModal(null)}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+          <div className="book-form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
             <div style={{ gridColumn: "1/-1" }}><FInput label="Title" value={form.title} onChange={(e: any) => setForm((f: any) => ({ ...f, title: e.target.value }))} /></div>
             <FInput label="Author" value={form.author} onChange={(e: any) => setForm((f: any) => ({ ...f, author: e.target.value }))} />
             <FInput label="ISBN" value={form.isbn} onChange={(e: any) => setForm((f: any) => ({ ...f, isbn: e.target.value }))} />

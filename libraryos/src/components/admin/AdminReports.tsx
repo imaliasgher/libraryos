@@ -39,6 +39,11 @@ export function AdminReports() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+      <style>{`
+        @media (max-width: 640px) {
+          .rep-two-col { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
       <div>
         <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 28, color: C.text }}>Reports & Analytics</h1>
         <p style={{ margin: "4px 0 0", color: C.textLight, fontSize: 13 }}>Library performance overview</p>
@@ -54,7 +59,7 @@ export function AdminReports() {
         ))}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+      <div className="rep-two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
         {/* Most Borrowed */}
         <div style={{ background: C.cardBg, border: `1.5px solid ${C.cardBorder}`, borderRadius: 18, padding: 22, boxShadow: C.shadow }}>
           <h3 style={{ margin: "0 0 16px", color: C.text, fontSize: 16, fontFamily: "'Lora',serif", fontWeight: 600 }}>Most Borrowed Books</h3>

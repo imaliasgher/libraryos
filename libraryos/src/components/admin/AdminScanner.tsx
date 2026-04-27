@@ -116,8 +116,9 @@ export function AdminScanner() {
   return (
     <div style={{ maxWidth: 800, margin: "0 auto", padding: "20px 0" }}>
       <ToastContainer />
+      <style>{`@media(max-width:560px){.scan-form-grid{grid-template-columns:1fr!important}.scan-header{flex-direction:column!important;align-items:flex-start!important}}`}</style>
       
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 30 }}>
+      <div className="scan-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 30 }}>
         <div>
           <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 28, color: C.text }}>QR & Barcode Scanner</h1>
           <p style={{ margin: "4px 0 0", color: C.textLight, fontSize: 14 }}>Scan an ISBN barcode to update stock or add new books.</p>
@@ -188,7 +189,7 @@ export function AdminScanner() {
             <div style={{ color: C.textMid, fontSize: 13, marginLeft: "auto" }}>ISBN: {isbn}</div>
           </div>
           
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, background: C.pageBg, padding: 24, borderRadius: 16, border: `1px solid ${C.cardBorder}` }}>
+          <div className="scan-form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, background: C.pageBg, padding: 24, borderRadius: 16, border: `1px solid ${C.cardBorder}` }}>
             <div style={{ gridColumn: "1/-1" }}><FInput label="Title" value={form.title} onChange={(e: any) => setForm((f: any) => ({ ...f, title: e.target.value }))} /></div>
             <FInput label="Author" value={form.author} onChange={(e: any) => setForm((f: any) => ({ ...f, author: e.target.value }))} />
             <FInput label="ISBN" value={form.isbn} onChange={(e: any) => setForm((f: any) => ({ ...f, isbn: e.target.value }))} />

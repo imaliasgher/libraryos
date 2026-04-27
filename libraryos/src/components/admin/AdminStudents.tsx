@@ -62,6 +62,7 @@ export function AdminStudents() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
       <ToastContainer />
+      <style>{`@media(max-width:560px){.stu-form-grid{grid-template-columns:1fr!important}}`}</style>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
         <div>
           <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 28, color: C.text }}>Student Members</h1>
@@ -129,7 +130,7 @@ export function AdminStudents() {
       {/* Add/Edit modal */}
       {(modal === "add" || modal === "edit") && (
         <Modal title={modal === "add" ? "Add Student" : "Edit Student"} onClose={() => setModal(null)}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+          <div className="stu-form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
             <div style={{ gridColumn: "1/-1" }}><FInput label="Full Name" value={form.name} onChange={(e: any) => setForm((f: any) => ({ ...f, name: e.target.value }))} /></div>
             <FInput label="Student Code" value={form.studentCode} onChange={(e: any) => setForm((f: any) => ({ ...f, studentCode: e.target.value }))} />
             <FInput label="Email" type="email" value={form.email} onChange={(e: any) => setForm((f: any) => ({ ...f, email: e.target.value }))} />
