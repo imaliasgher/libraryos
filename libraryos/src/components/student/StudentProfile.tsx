@@ -30,7 +30,8 @@ export function StudentProfile() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
       <ToastContainer />
-      <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 28, color: C.text }}>My Profile</h1>
+      <style>{`@media(max-width:560px){.profile-grid{grid-template-columns:1fr!important}}`}</style>
+      <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 26, color: C.text }}>My Profile</h1>
 
       <div style={{ background: C.cardBg, border: `1.5px solid ${C.cardBorder}`, borderRadius: 22, padding: 28, boxShadow: C.shadow }}>
         <div style={{ display: "flex", gap: 24, alignItems: "flex-start", marginBottom: 28, flexWrap: "wrap" }}>
@@ -41,7 +42,7 @@ export function StudentProfile() {
             <h2 style={{ margin: "0 0 4px", fontFamily: "'Lora',serif", fontSize: 24, color: C.text }}>{user.name}</h2>
             <p style={{ margin: "0 0 10px", color: C.textMid, fontSize: 14 }}>{user.department}</p>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              <Badge color={C.green}>Active</Badge>
+              <Badge color={user.status === "suspended" ? C.red : C.green}>{user.status ?? "active"}</Badge>
               <Badge color={C.blue}>{user.studentCode}</Badge>
             </div>
           </div>
@@ -49,7 +50,7 @@ export function StudentProfile() {
         </div>
 
         {edit ? (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+          <div className="profile-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
             <div style={{ gridColumn: "1/-1" }}><FInput label="Full Name" value={form.name} onChange={(e: any) => setForm((f: any) => ({ ...f, name: e.target.value }))} /></div>
             <FInput label="Email" type="email" value={form.email} onChange={(e: any) => setForm((f: any) => ({ ...f, email: e.target.value }))} />
             <FInput label="Phone" value={form.phone} onChange={(e: any) => setForm((f: any) => ({ ...f, phone: e.target.value }))} />
@@ -61,7 +62,7 @@ export function StudentProfile() {
             </div>
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <div className="profile-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             {[
               ["📧 Email", user.email],
               ["🏛️ Department", user.department],

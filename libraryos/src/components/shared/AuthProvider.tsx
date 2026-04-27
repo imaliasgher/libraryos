@@ -5,7 +5,7 @@ import { apiMe, apiLogout } from "@/lib/client";
 interface User {
   userId: number; email: string; role: "admin" | "student";
   name: string; studentId?: number; studentCode?: string;
-  avatar?: string; department?: string;
+  avatar?: string; department?: string; status?: string;
 }
 
 interface AuthCtx { user: User | null; loading: boolean; refresh: () => void; logout: () => Promise<void>; }

@@ -31,7 +31,7 @@ export function AdminStudents() {
 
   const openAdd = () => {
     const code = `STU${String(students.length + 1).padStart(3, "0")}`;
-    setForm({ name: "", studentCode: code, email: "", password: "pass123", phone: "", department: "Computer Science", year: 1, status: "active", joined: new Date().toISOString().split("T")[0] });
+    setForm({ name: "", studentCode: code, email: "", password: "", phone: "", department: "Computer Science", year: 1, status: "active", joined: new Date().toISOString().split("T")[0] });
     setModal("add");
   };
   const openEdit    = (s: any) => { setForm({ ...s }); setSel(s); setModal("edit"); };
@@ -39,8 +39,12 @@ export function AdminStudents() {
 
   const save = async () => {
     try {
-      if (modal === "add") await apiAddStudent(form);
-      else await apiUpdateStudent(sel.id, form);
+      if (modal === "add") {
+        if (!form.password || form.password.length < 6) return toast("Password must be at least 6 characters", "err");
+        await apiAddStudent(form);
+      } else {
+        await apiUpdateStudent(sel.id, form);
+      }
       await load(); setModal(null); toast(modal === "add" ? "Student added!" : "Student updated!");
     } catch (e: any) { toast(e.message, "err"); }
   };

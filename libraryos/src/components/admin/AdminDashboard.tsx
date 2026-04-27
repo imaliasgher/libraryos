@@ -14,6 +14,9 @@ export function AdminDashboard() {
   const topGenres = Object.entries(genreCounts as Record<string, number>).sort((a: any, b: any) => b[1] - a[1]).slice(0, 5);
   const maxG = (topGenres[0]?.[1] as number) ?? 1;
 
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
       <style>{`
@@ -24,15 +27,15 @@ export function AdminDashboard() {
         }
       `}</style>
       <div>
-        <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 30, color: C.text, fontWeight: 700 }}>Good morning! 👋</h1>
+        <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 30, color: C.text, fontWeight: 700 }}>{greeting}! 👋</h1>
         <p style={{ margin: "6px 0 0", color: C.textLight, fontSize: 14 }}>{new Date().toLocaleDateString("en-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
       </div>
 
       <div className="dash-stat-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16 }}>
-        <StatCard icon="📚" label="Total Books"   value={stats.totalBooks}       sub={<><span style={{color: C.green, fontWeight: 600}}>+12%</span> from last month</>} color={C.primary} bg={C.primaryBg} />
-        <StatCard icon="🎓" label="Active Members" value={stats.totalStudents}   sub={<><span style={{color: C.green, fontWeight: 600}}>+5%</span> from last month</>} color={C.green}   bg={C.greenBg} />
-        <StatCard icon="📖" label="Books Borrowed" value={stats.activeIssues}    sub={<><span style={{color: C.red, fontWeight: 600}}>-3%</span> from last month</>} color={C.amber}   bg={C.amberBg} />
-        <StatCard icon="❗" label="Overdue Books"  value={stats.overdueCount}    sub={<><span style={{color: C.red, fontWeight: 600}}>+4</span> from last week</>} color={C.red}     bg={C.redBg} />
+        <StatCard icon="📚" label="Total Books"   value={stats.totalBooks}     sub={`${stats.totalAvailable} copies available`}                                          color={C.primary} bg={C.primaryBg} />
+        <StatCard icon="🎓" label="Active Members" value={stats.totalStudents}   sub={`${stats.totalStudents} registered`}                                               color={C.green}   bg={C.greenBg} />
+        <StatCard icon="📖" label="Books Borrowed" value={stats.activeIssues}    sub={`${stats.overdueCount > 0 ? stats.overdueCount + " overdue" : "none overdue"}`}  color={C.amber}   bg={C.amberBg} />
+        <StatCard icon="❗" label="Overdue Books"  value={stats.overdueCount}    sub={stats.totalFines > 0 ? `₹${stats.totalFines} fines pending` : "all on track"}     color={C.red}     bg={C.redBg} />
       </div>
 
       <div className="dash-main-grid" style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24, alignItems: "start" }}>

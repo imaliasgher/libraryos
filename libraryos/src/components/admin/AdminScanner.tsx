@@ -68,13 +68,15 @@ export function AdminScanner() {
         setStatus("found");
         toast("Book located in inventory!");
       } else {
-        const meta = res.metadata || { title: "", author: "", year: new Date().getFullYear(), description: "", genre: "All", cover: "📖" };
+        const meta = res.metadata || { title: "", author: "", year: new Date().getFullYear(), description: "", genre: "General", cover: "📖", thumbnail: null, publisher: "", pageCount: null };
         setForm({
           title: meta.title, author: meta.author, isbn: code, genre: meta.genre,
-          cover: meta.cover, year: meta.year, total: 1, available: 1, description: meta.description
+          cover: meta.cover, year: meta.year, total: 1, available: 1,
+          description: meta.description, thumbnail: meta.thumbnail,
+          publisher: meta.publisher, pageCount: meta.pageCount,
         });
         setStatus("new");
-        toast(res.metadata ? "Google Books metadata fetched!" : "No metadata found. Manual entry required.", "ok");
+        toast(res.metadata ? `✅ Found: "${meta.title}" — Confirm & save below.` : "ISBN not found in Google Books. Enter details manually.", "ok");
       }
     } catch (err: any) {
       toast(err.message || "Failed to scan", "err");
@@ -188,7 +190,28 @@ export function AdminScanner() {
             <div style={{ color: C.primaryDark, fontWeight: 700, fontSize: 16 }}>New Book Discovery</div>
             <div style={{ color: C.textMid, fontSize: 13, marginLeft: "auto" }}>ISBN: {isbn}</div>
           </div>
-          
+
+          {/* Google Books Preview Card */}
+          {(form.thumbnail || form.title) && (
+            <div style={{ display: "flex", gap: 18, padding: 18, background: C.primaryBg, borderRadius: 16, border: `1.5px solid ${C.primary}20`, marginBottom: 20, alignItems: "flex-start" }}>
+              {form.thumbnail ? (
+                <img src={form.thumbnail} alt={form.title} style={{ width: 70, height: 100, objectFit: "cover", borderRadius: 8, boxShadow: "0 4px 12px rgba(0,0,0,0.15)", flexShrink: 0 }} />
+              ) : (
+                <div style={{ width: 70, height: 100, background: C.inputBg, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, flexShrink: 0 }}>{form.cover}</div>
+              )}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ color: C.text, fontWeight: 800, fontSize: 17, fontFamily: "'Lora',serif", marginBottom: 4, lineHeight: 1.3 }}>{form.title || "Unknown Title"}</div>
+                <div style={{ color: C.textMid, fontSize: 13, marginBottom: 8 }}>by {form.author || "Unknown Author"}</div>
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  {form.genre && <span style={{ background: C.primaryBg, color: C.primaryDark, border: `1px solid ${C.primary}30`, borderRadius: 20, padding: "2px 9px", fontSize: 11, fontWeight: 700 }}>{form.genre}</span>}
+                  {form.year && <span style={{ background: C.inputBg, color: C.textMid, border: `1px solid ${C.cardBorder}`, borderRadius: 20, padding: "2px 9px", fontSize: 11 }}>{form.year}</span>}
+                  {form.publisher && <span style={{ background: C.inputBg, color: C.textMid, border: `1px solid ${C.cardBorder}`, borderRadius: 20, padding: "2px 9px", fontSize: 11 }}>{form.publisher}</span>}
+                  {form.pageCount && <span style={{ background: C.inputBg, color: C.textMid, border: `1px solid ${C.cardBorder}`, borderRadius: 20, padding: "2px 9px", fontSize: 11 }}>{form.pageCount}pp</span>}
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="scan-form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, background: C.pageBg, padding: 24, borderRadius: 16, border: `1px solid ${C.cardBorder}` }}>
             <div style={{ gridColumn: "1/-1" }}><FInput label="Title" value={form.title} onChange={(e: any) => setForm((f: any) => ({ ...f, title: e.target.value }))} /></div>
             <FInput label="Author" value={form.author} onChange={(e: any) => setForm((f: any) => ({ ...f, author: e.target.value }))} />

@@ -33,7 +33,7 @@ export function AdminSettings() {
       
       <div style={{ marginBottom: 30 }}>
         <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 28, color: C.text }}>System Settings</h1>
-        <p style={{ margin: "4px 0 0", color: C.textLight, fontSize: 14 }}>Global configurations and dangerously destructive operations.</p>
+        <p style={{ margin: "4px 0 0", color: C.textLight, fontSize: 14 }}>Global configurations and library management.</p>
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
@@ -43,11 +43,11 @@ export function AdminSettings() {
           <h2 style={{ fontSize: 18, margin: "0 0 20px", color: C.text }}>Admin Profile</h2>
           <div className="settings-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
             <FInput label="Admin Email" value="admin@library.edu" disabled style={{ opacity: 0.6 }} />
-            <FInput label="Library Name" value="University Open Library" onChange={() => {}} />
+            <FInput label="Library Name" value="University Open Library" disabled style={{ opacity: 0.6 }} />
             <FInput label="Time Zone" value="Asia/Kolkata" disabled style={{ opacity: 0.6 }} />
           </div>
-          <div style={{ marginTop: 20 }}>
-            <Btn variant="ghost" onClick={() => toast("Profile updated!")}>Save Profile</Btn>
+          <div style={{ marginTop: 14, padding: "10px 14px", background: C.primaryBg, borderRadius: 10, border: `1px solid ${C.primary}25`, fontSize: 12, color: C.textMid }}>
+            ℹ️ Admin profile details are set at deployment time. To change email or password, update your database directly.
           </div>
         </div>
 
@@ -55,12 +55,12 @@ export function AdminSettings() {
         <div style={{ background: C.cardBg, border: `1.5px solid ${C.cardBorder}`, borderRadius: 18, padding: 30, boxShadow: C.shadow }}>
           <h2 style={{ fontSize: 18, margin: "0 0 20px", color: C.text }}>Lending Policies</h2>
           <div className="settings-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-            <FInput label="Default Borrow Period (Days)" type="number" value="30" onChange={() => {}} />
-            <FInput label="Daily Overdue Fine (₹)" type="number" value="10" onChange={() => {}} />
-            <FInput label="Max Books Per Student" type="number" value="5" onChange={() => {}} />
+            <FInput label="Default Borrow Period (Days)" type="number" value="30" disabled style={{ opacity: 0.7 }} />
+            <FInput label="Daily Overdue Fine (₹)" type="number" value="10" disabled style={{ opacity: 0.7 }} />
+            <FInput label="Max Books Per Student" type="number" value="5" disabled style={{ opacity: 0.7 }} />
           </div>
-          <div style={{ marginTop: 20 }}>
-            <Btn variant="ghost" onClick={() => toast("Policies updated!")}>Apply Defaults</Btn>
+          <div style={{ marginTop: 14, padding: "10px 14px", background: C.amberBg, borderRadius: 10, border: `1px solid ${C.amber}25`, fontSize: 12, color: C.textMid }}>
+            ℹ️ These values are currently fixed defaults. Fine rate and loan period are enforced at transaction level.
           </div>
         </div>
 

@@ -18,12 +18,19 @@ export function StudentFines() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+      <style>{`
+        @media(max-width:600px){
+          .fines-stat-grid{grid-template-columns:1fr!important}
+          .fines-table-header,.fines-table-row{grid-template-columns:1fr 1fr 1fr!important}
+          .fines-col-hide{display:none!important}
+        }
+      `}</style>
       <div>
         <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 28, color: C.text }}>Fines & Dues</h1>
         <p style={{ margin: "4px 0 0", color: C.textLight, fontSize: 13 }}>Track your overdue charges</p>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14 }}>
+      <div className="fines-stat-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14 }}>
         <StatCard icon="💰" label="Outstanding" value={`₹${totalFine}`} sub="to be paid"    color={C.red}   bg={C.redBg} />
         <StatCard icon="✅" label="Already Paid" value={`₹${paid}`}    sub="cleared"        color={C.green} bg={C.greenBg} />
         <StatCard icon="📋" label="Fine Records" value={fineRows.length} sub="total entries" color={C.amber} bg={C.amberBg} />
@@ -44,9 +51,9 @@ export function StudentFines() {
         </div>
       ) : (
         <div style={{ background: C.cardBg, border: `1.5px solid ${C.cardBorder}`, borderRadius: 18, overflow: "hidden", boxShadow: C.shadow }}>
-          <div style={{ padding: "12px 18px", background: C.inputBg, borderBottom: `1.5px solid ${C.cardBorder}`, display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr" }}>
-            {["Book", "Issued", "Due Date", "Days OD", "Fine"].map(h => (
-              <div key={h} style={{ color: C.textLight, fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.8 }}>{h}</div>
+          <div className="fines-table-header" style={{ padding: "12px 18px", background: C.inputBg, borderBottom: `1.5px solid ${C.cardBorder}`, display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr" }}>
+            {[["Book", false], ["Issued", true], ["Due Date", false], ["Days OD", true], ["Fine", false]].map(([h, hide]) => (
+              <div key={h as string} className={hide ? "fines-col-hide" : ""} style={{ color: C.textLight, fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.8 }}>{h}</div>
             ))}
           </div>
           {fineRows.map((tx, i) => {

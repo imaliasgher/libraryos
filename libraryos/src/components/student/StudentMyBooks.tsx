@@ -25,6 +25,7 @@ export function StudentMyBooks() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+      <style>{`@media(max-width:600px){.mybooks-stat{grid-template-columns:1fr 1fr!important}}`}</style>
       <div>
         <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 28, color: C.text }}>My Books</h1>
         <p style={{ margin: "4px 0 0", color: C.textLight, fontSize: 13 }}>Your borrowing history and active loans</p>
@@ -40,7 +41,7 @@ export function StudentMyBooks() {
         </div>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14 }}>
+      <div className="mybooks-stat" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14 }}>
         <StatCard icon="📖" label="Borrowed"  value={active.length}  sub={`${overdue.length} overdue`}              color={C.primary} bg={C.primaryBg} />
         <StatCard icon="⏰" label="Overdue"   value={overdue.length} sub={overdue.length > 0 ? "pay fines" : "all good!"} color={overdue.length > 0 ? C.red : C.green} bg={overdue.length > 0 ? C.redBg : C.greenBg} />
         <StatCard icon="📚" label="All Time"  value={txs.length}     sub="total borrows"                            color={C.amber}   bg={C.amberBg} />
