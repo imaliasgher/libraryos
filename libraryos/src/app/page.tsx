@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useCallback, useLayoutEffect, useState } from "react";
 import { AuthProvider, useAuth } from "@/components/shared/AuthProvider";
 import { LoginScreen } from "@/components/shared/LoginScreen";
 import { Shell } from "@/components/shared/Shell";
@@ -22,16 +22,44 @@ import { StudentMyBooks }   from "@/components/student/StudentMyBooks";
 import { StudentFines }     from "@/components/student/StudentFines";
 import { StudentProfile }   from "@/components/student/StudentProfile";
 
+const ADMIN_PAGE_KEYS = ["dashboard", "books", "students", "transactions", "scanner", "reports", "settings"] as const;
+const STUDENT_PAGE_KEYS = ["dashboard", "catalogue", "mybooks", "fines", "profile"] as const;
+const ADMIN_PAGE_STORAGE = "libraryos_admin_page";
+const STUDENT_PAGE_STORAGE = "libraryos_student_page";
+
+function isAllowedPage(p: string, allowed: readonly string[]): p is string {
+  return allowed.includes(p);
+}
+
 // ── Admin App ──────────────────────────────────────────────────────────────
 function AdminApp() {
-  const [page, setPage] = useState("dashboard");
+  const [page, setPageState] = useState<string>("dashboard");
+
+  useLayoutEffect(() => {
+    try {
+      const v = sessionStorage.getItem(ADMIN_PAGE_STORAGE);
+      if (v && isAllowedPage(v, ADMIN_PAGE_KEYS)) setPageState(v);
+    } catch {
+      /* private mode */
+    }
+  }, []);
+
+  const setPage = useCallback((p: string) => {
+    if (!isAllowedPage(p, ADMIN_PAGE_KEYS)) return;
+    setPageState(p);
+    try {
+      sessionStorage.setItem(ADMIN_PAGE_STORAGE, p);
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   const nav = [
     { key: "dashboard",    icon: "🏠", label: "Dashboard" },
     { key: "books",        icon: "📚", label: "Book Catalogue" },
     { key: "students",     icon: "🎓", label: "Members" },
     { key: "transactions", icon: "🔄", label: "Issue / Return" },
-    { key: "scanner",      icon: "📷", label: "QR Scanner" },
+    { key: "scanner",      icon: "📷", label: "Barcode desk" },
     { key: "reports",      icon: "📊", label: "Reports" },
     { key: "settings",     icon: "⚙️", label: "Settings" },
   ];
@@ -45,22 +73,43 @@ function AdminApp() {
     </div>
   );
 
+  // Mount only the active view so each screen loads its own data and heavy widgets
+  // (e.g. barcode desk) do not run global listeners while hidden.
   return (
     <Shell nav={nav} page={page} setPage={setPage} sidebarBottom={sidebarBottom}>
-      <div style={{ display: page === "dashboard" ? "block" : "none" }}><AdminDashboard setPage={setPage} /></div>
-      <div style={{ display: page === "books" ? "block" : "none" }}><AdminBooks /></div>
-      <div style={{ display: page === "students" ? "block" : "none" }}><AdminStudents /></div>
-      <div style={{ display: page === "transactions" ? "block" : "none" }}><AdminTransactions /></div>
-      <div style={{ display: page === "reports" ? "block" : "none" }}><AdminReports /></div>
-      <div style={{ display: page === "scanner" ? "block" : "none" }}><AdminScanner /></div>
-      <div style={{ display: page === "settings" ? "block" : "none" }}><AdminSettings /></div>
+      {page === "dashboard" && <AdminDashboard setPage={setPage} />}
+      {page === "books" && <AdminBooks />}
+      {page === "students" && <AdminStudents />}
+      {page === "transactions" && <AdminTransactions />}
+      {page === "reports" && <AdminReports />}
+      {page === "scanner" && <AdminScanner />}
+      {page === "settings" && <AdminSettings />}
     </Shell>
   );
 }
 
 // ── Student App ────────────────────────────────────────────────────────────
 function StudentApp() {
-  const [page, setPage] = useState("dashboard");
+  const [page, setPageState] = useState<string>("dashboard");
+
+  useLayoutEffect(() => {
+    try {
+      const v = sessionStorage.getItem(STUDENT_PAGE_STORAGE);
+      if (v && isAllowedPage(v, STUDENT_PAGE_KEYS)) setPageState(v);
+    } catch {
+      /* private mode */
+    }
+  }, []);
+
+  const setPage = useCallback((p: string) => {
+    if (!isAllowedPage(p, STUDENT_PAGE_KEYS)) return;
+    setPageState(p);
+    try {
+      sessionStorage.setItem(STUDENT_PAGE_STORAGE, p);
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   const nav = [
     { key: "dashboard", icon: "🏠", label: "My Library" },
@@ -81,11 +130,11 @@ function StudentApp() {
 
   return (
     <Shell nav={nav} page={page} setPage={setPage} sidebarBottom={sidebarBottom}>
-      <div style={{ display: page === "dashboard" ? "block" : "none" }}><StudentDashboard /></div>
-      <div style={{ display: page === "catalogue" ? "block" : "none" }}><StudentCatalogue /></div>
-      <div style={{ display: page === "mybooks"   ? "block" : "none" }}><StudentMyBooks /></div>
-      <div style={{ display: page === "fines"     ? "block" : "none" }}><StudentFines /></div>
-      <div style={{ display: page === "profile"   ? "block" : "none" }}><StudentProfile /></div>
+      {page === "dashboard" && <StudentDashboard />}
+      {page === "catalogue" && <StudentCatalogue />}
+      {page === "mybooks" && <StudentMyBooks />}
+      {page === "fines" && <StudentFines />}
+      {page === "profile" && <StudentProfile />}
     </Shell>
   );
 }

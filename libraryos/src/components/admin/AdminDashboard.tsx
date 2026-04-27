@@ -41,7 +41,7 @@ export function AdminDashboard({ setPage }: { setPage: (p: string) => void }) {
           <p style={{ margin: "4px 0 0", color: C.textLight, fontSize: 14 }}>{new Date().toLocaleDateString("en-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
-          <button onClick={() => setPage("scanner")}      style={{ padding: "10px 16px", background: C.primary, color: "#fff", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>✨ Scan Book</button>
+          <button onClick={() => setPage("scanner")}      style={{ padding: "10px 16px", background: C.primary, color: "#fff", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>✨ Barcode desk</button>
           <button onClick={() => setPage("transactions")} style={{ padding: "10px 16px", background: "#fff", border: `1.5px solid ${C.cardBorder}`, color: C.text, borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>🔄 Issue / Return</button>
           <button onClick={() => setPage("students")}     style={{ padding: "10px 16px", background: "#fff", border: `1.5px solid ${C.cardBorder}`, color: C.text, borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>🧒 New Member</button>
         </div>

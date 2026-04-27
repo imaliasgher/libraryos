@@ -13,7 +13,12 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
   const student = await prisma.student.findUnique({
     where: { id: +params.id },
-    include: { transactions: { orderBy: { createdAt: "desc" } } },
+    include: {
+      transactions: {
+        orderBy: { createdAt: "desc" },
+        include: { book: { select: { id: true, title: true, author: true, isbn: true, genre: true } } },
+      },
+    },
   });
   if (!student) return err("Not found", 404);
   return ok(student);
