@@ -27,7 +27,6 @@ export function Shell({ nav, page, setPage, children, sidebarBottom }: ShellProp
         @media (max-width: 768px) {
           .shell-sidebar { transform: translateX(-100%); position: fixed !important; z-index: 1000; transition: transform 0.27s cubic-bezier(.4,0,.2,1) !important; }
           .shell-sidebar.open { transform: translateX(0) !important; }
-          .shell-overlay { display: flex !important; }
           .shell-hamburger { display: flex !important; }
           .shell-search { display: none !important; }
           .shell-user-name { display: none !important; }
@@ -37,17 +36,17 @@ export function Shell({ nav, page, setPage, children, sidebarBottom }: ShellProp
         @media (min-width: 769px) {
           .shell-sidebar { transform: translateX(0) !important; position: sticky !important; }
           .shell-hamburger { display: none !important; }
-          .shell-overlay { display: none !important; }
         }
         .shell-nav-btn:hover { background: ${C.primaryBg} !important; color: ${C.primaryDark} !important; }
       `}</style>
 
-      {/* Mobile overlay backdrop */}
-      <div
-        className="shell-overlay"
-        onClick={() => setMobileOpen(false)}
-        style={{ display: "none", position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 999, backdropFilter: "blur(3px)" }}
-      />
+      {/* Mobile overlay backdrop — only rendered when sidebar is open */}
+      {mobileOpen && (
+        <div
+          onClick={() => setMobileOpen(false)}
+          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 999, backdropFilter: "blur(3px)", WebkitBackdropFilter: "blur(3px)" } as any}
+        />
+      )}
 
       {/* ── Sidebar ── */}
       <div
