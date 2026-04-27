@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import { C, fmt, addDays, ACCENT_COLORS, ACCENT_BGS } from "@/lib/tokens";
-import { apiBooks, apiTransactions, apiBorrowBook } from "@/lib/client";
-import { Badge, Modal, Btn, Spinner, useToast } from "../shared/ui";
+import { C, ACCENT_COLORS, ACCENT_BGS } from "@/lib/tokens";
+import { apiBooks, apiTransactions } from "@/lib/client";
+import { Badge, Modal, Btn, Spinner } from "../shared/ui";
 
 export function StudentCatalogue() {
   const [books, setBooks]   = useState<any[]>([]);
@@ -12,7 +12,6 @@ export function StudentCatalogue() {
   const [genre, setGenre]   = useState("All");
   const [avOnly, setAvOnly] = useState(false);
   const [sel, setSel]       = useState<any>(null);
-  const { toast, ToastContainer } = useToast();
 
   const load = async () => {
     const [b, t] = await Promise.all([apiBooks(), apiTransactions()]);
@@ -31,17 +30,10 @@ export function StudentCatalogue() {
     return ms && mg && ma;
   });
 
-  const borrow = async (book: any) => {
-    if (book.available < 1 || alreadyHas(book.id)) return;
-    try { await apiBorrowBook(book.id, 30); await load(); setSel(null); toast("Borrowed! Return in 30 days."); }
-    catch (e: any) { toast(e.message, "err"); }
-  };
-
   if (loading) return <Spinner />;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-      <ToastContainer />
       <div>
         <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 28, color: C.text }}>The Story Room</h1>
         <p style={{ margin: "4px 0 0", color: C.textMid, fontSize: 15, fontWeight: 600 }}>Pick an adventure today! ✨ {books.filter(b => b.available > 0).length} stories are ready for you.</p>
@@ -83,10 +75,7 @@ export function StudentCatalogue() {
               <div style={{ color: C.textLight, fontSize: 11, marginBottom: 14, lineHeight: 1.5 }}>{book.description?.substring(0, 70)}…</div>
               <div style={{ display: "flex", gap: 6, justifyContent: "space-between", alignItems: "center" }}>
                 <Badge color={bc}>{book.genre}</Badge>
-                <button onClick={e => { e.stopPropagation(); borrow(book); }} disabled={book.available < 1 || has}
-                  style={{ background: has ? C.blueBg : book.available < 1 ? "#f5f0eb" : `linear-gradient(135deg,${C.primary},${C.primaryDark})`, color: has ? C.blue : book.available < 1 ? C.textLight : "#fff", border: `1.5px solid ${has ? C.blue : book.available < 1 ? C.inputBorder : C.primary}`, borderRadius: 8, padding: "5px 14px", fontSize: 12, fontWeight: 700, cursor: book.available < 1 || has ? "not-allowed" : "pointer", fontFamily: "inherit" }}>
-                  {has ? "Borrowed" : book.available < 1 ? "Unavailable" : "Borrow"}
-                </button>
+                {has && <Badge color={C.blue}>Borrowed</Badge>}
               </div>
             </div>
           );
@@ -119,7 +108,6 @@ export function StudentCatalogue() {
           </div>
           <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
             <Btn variant="ghost" onClick={() => setSel(null)}>Close</Btn>
-            {!alreadyHas(sel.id) && sel.available > 0 && <Btn variant="success" onClick={() => borrow(sel)}>Borrow this book ✓</Btn>}
           </div>
         </Modal>
       )}

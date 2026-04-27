@@ -1,18 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
-import { C, fmt, calcFine, daysLeft, addDays } from "@/lib/tokens";
-import { apiTransactions, apiBooks, apiBorrowBook } from "@/lib/client";
+import { C, fmt, daysLeft } from "@/lib/tokens";
+import { apiTransactions, apiBooks } from "@/lib/client";
 import { useAuth } from "../shared/AuthProvider";
-import { StatCard, Badge, Modal, Btn, Spinner, useToast } from "../shared/ui";
+import { StatCard, Badge, Spinner } from "../shared/ui";
 
 export function StudentDashboard() {
   const { user } = useAuth();
   const [txs, setTxs]     = useState<any[]>([]);
   const [books, setBooks]  = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [modal, setModal]  = useState(false);
-  const [selBook, setSelBook] = useState<any>(null);
-  const { toast, ToastContainer } = useToast();
 
   const load = async () => {
     const [t, b] = await Promise.all([apiTransactions(), apiBooks()]);
@@ -27,17 +24,10 @@ export function StudentDashboard() {
 
   const suggested = books.filter(b => b.available > 0 && !active.some(t => t.bookId === b.id)).slice(0, 4);
 
-  const borrow = async () => {
-    if (!selBook) return;
-    try { await apiBorrowBook(selBook.id, 30); await load(); setModal(false); toast("Book borrowed! Return in 30 days."); }
-    catch (e: any) { toast(e.message, "err"); }
-  };
-
   if (loading) return <Spinner />;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
-      <ToastContainer />
 
       {/* Welcome banner */}
       <div style={{ background: `linear-gradient(135deg,#fff8f0,#fff)`, border: `2px solid ${C.primary}25`, borderRadius: 24, padding: "28px", display: "flex", alignItems: "center", gap: 24, boxShadow: C.shadow, flexWrap: "wrap" }}>
@@ -109,34 +99,12 @@ export function StudentDashboard() {
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ color: C.text, fontWeight: 700, fontSize: 13, lineHeight: 1.3 }}>{book.title}</div>
                 <div style={{ color: C.textLight, fontSize: 11, marginBottom: 6 }}>{book.author}</div>
-                <Btn variant="primary" style={{ padding: "5px 12px", fontSize: 11, boxShadow: "none" }} onClick={() => { setSelBook(book); setModal(true); }}>Borrow</Btn>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {modal && selBook && (
-        <Modal title="Borrow Request" onClose={() => setModal(false)}>
-          <div style={{ textAlign: "center", padding: "10px 0 20px" }}>
-            <div style={{ fontSize: 56, marginBottom: 12 }}>{selBook.cover}</div>
-            <h3 style={{ fontFamily: "'Lora',serif", color: C.text, fontSize: 20, marginBottom: 4 }}>{selBook.title}</h3>
-            <p style={{ color: C.textMid, fontSize: 14, marginBottom: 20 }}>by {selBook.author}</p>
-            <div style={{ background: C.primaryBg, borderRadius: 14, padding: "14px 20px", marginBottom: 20, border: `1px solid ${C.primary}25` }}>
-              {[["Borrow date", fmt(new Date().toISOString().split("T")[0])], ["Return by", fmt(addDays(30))], ["Fine rate", "₹10 / day overdue"]].map(([k, v]) => (
-                <div key={k} style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                  <span style={{ color: C.textMid, fontSize: 13 }}>{k}</span>
-                  <span style={{ color: k === "Fine rate" ? C.red : C.text, fontWeight: 600, fontSize: 13 }}>{v}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
-            <Btn variant="ghost" onClick={() => setModal(false)}>Cancel</Btn>
-            <Btn variant="success" onClick={borrow}>Confirm Borrow ✓</Btn>
-          </div>
-        </Modal>
-      )}
     </div>
   );
 }
