@@ -47,13 +47,13 @@ function AdminApp() {
 
   return (
     <Shell nav={nav} page={page} setPage={setPage} sidebarBottom={sidebarBottom}>
-      {page === "dashboard"    && <AdminDashboard setPage={setPage} />}
-      {page === "books"        && <AdminBooks />}
-      {page === "students"     && <AdminStudents />}
-      {page === "transactions" && <AdminTransactions />}
-      {page === "reports"      && <AdminReports />}
-      {page === "scanner"      && <AdminScanner />}
-      {page === "settings"     && <AdminSettings />}
+      <div style={{ display: page === "dashboard" ? "block" : "none" }}><AdminDashboard setPage={setPage} /></div>
+      <div style={{ display: page === "books" ? "block" : "none" }}><AdminBooks /></div>
+      <div style={{ display: page === "students" ? "block" : "none" }}><AdminStudents /></div>
+      <div style={{ display: page === "transactions" ? "block" : "none" }}><AdminTransactions /></div>
+      <div style={{ display: page === "reports" ? "block" : "none" }}><AdminReports /></div>
+      <div style={{ display: page === "scanner" ? "block" : "none" }}><AdminScanner /></div>
+      <div style={{ display: page === "settings" ? "block" : "none" }}><AdminSettings /></div>
     </Shell>
   );
 }
@@ -81,11 +81,11 @@ function StudentApp() {
 
   return (
     <Shell nav={nav} page={page} setPage={setPage} sidebarBottom={sidebarBottom}>
-      {page === "dashboard" && <StudentDashboard />}
-      {page === "catalogue" && <StudentCatalogue />}
-      {page === "mybooks"   && <StudentMyBooks />}
-      {page === "fines"     && <StudentFines />}
-      {page === "profile"   && <StudentProfile />}
+      <div style={{ display: page === "dashboard" ? "block" : "none" }}><StudentDashboard /></div>
+      <div style={{ display: page === "catalogue" ? "block" : "none" }}><StudentCatalogue /></div>
+      <div style={{ display: page === "mybooks"   ? "block" : "none" }}><StudentMyBooks /></div>
+      <div style={{ display: page === "fines"     ? "block" : "none" }}><StudentFines /></div>
+      <div style={{ display: page === "profile"   ? "block" : "none" }}><StudentProfile /></div>
     </Shell>
   );
 }

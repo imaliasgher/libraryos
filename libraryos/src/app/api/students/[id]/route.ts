@@ -1,5 +1,6 @@
 // src/app/api/students/[id]/route.ts
 import { NextRequest } from "next/server";
+import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { ok, err } from "@/lib/api";
@@ -33,12 +34,30 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     updateData.status = body.status;
     updateData.studentCode = body.studentCode;
     updateData.joined = body.joined;
+    if (body.password) {
+      updateData.plainPassword = body.password;
+    }
   }
 
   try {
     const student = await prisma.student.update({ where: { id: +params.id }, data: updateData });
+    // Sync password to User table if changed
+    if (body.password && session.role === "admin") {
+      const hash = await bcrypt.hash(body.password, 10);
+      await prisma.user.updateMany({
+        where: { studentId: student.id },
+        data: { password: hash, email: student.email }
+      });
+    } else if (body.email) {
+      // Sync email to user table if changed
+      await prisma.user.updateMany({
+        where: { studentId: student.id },
+        data: { email: student.email }
+      });
+    }
     return ok(student);
-  } catch {
+  } catch (e: any) {
+    console.error(e);
     return err("Server error", 500);
   }
 }

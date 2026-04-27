@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const student = await prisma.student.create({
-      data: { name, studentCode, email, phone: phone ?? "", department: department ?? "General", year: +year, avatar, joined: joined ?? new Date().toISOString().split("T")[0], status: status ?? "active" },
+      data: { name, studentCode, email, phone: phone ?? "", department: department ?? "General", year: +year, avatar, joined: joined ?? new Date().toISOString().split("T")[0], status: status ?? "active", plainPassword: password },
     });
     const hash = await bcrypt.hash(password, 10);
     await prisma.user.create({ data: { email, password: hash, role: "student", studentId: student.id } });

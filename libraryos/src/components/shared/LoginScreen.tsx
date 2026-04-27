@@ -26,12 +26,7 @@ export function LoginScreen() {
     }
   };
 
-  const demoFill = (who: "admin" | "student") => {
-    setTab(who);
-    if (who === "admin")   { setIdent("admin@library.edu"); setPass("admin123"); }
-    else                   { setIdent("STU001");            setPass("aarav123"); }
-    setErr("");
-  };
+
 
   return (
     <div style={{ minHeight: "100vh", background: "#fdf8f5", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
@@ -87,20 +82,9 @@ export function LoginScreen() {
               {loading ? "Signing in…" : "Sign In →"}
             </button>
           </div>
-
-          {/* Demo credentials */}
-          <div style={{ marginTop: 24, padding: "14px 16px", background: C.primaryBg, borderRadius: 12, border: `1px solid ${C.primary}25` }}>
-            <div style={{ color: C.textMid, fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 8 }}>Demo Credentials</div>
-            <div style={{ display: "flex", gap: 8 }}>
-              <button onClick={() => demoFill("admin")}
-                style={{ flex: 1, background: "#fff", border: `1px solid ${C.cardBorder}`, borderRadius: 8, padding: "8px", fontSize: 12, fontWeight: 600, color: C.primaryDark, cursor: "pointer", fontFamily: "inherit" }}>🛡️ Use Admin</button>
-              <button onClick={() => demoFill("student")}
-                style={{ flex: 1, background: "#fff", border: `1px solid ${C.cardBorder}`, borderRadius: 8, padding: "8px", fontSize: 12, fontWeight: 600, color: C.green, cursor: "pointer", fontFamily: "inherit" }}>🎓 Use Student</button>
-            </div>
-          </div>
         </div>
 
-        <p style={{ textAlign: "center", color: C.textLight, fontSize: 12, marginTop: 20 }}>LibraryOS · Pastel Edition v2.0</p>
+        <p style={{ textAlign: "center", color: C.textLight, fontSize: 12, marginTop: 20 }}>LibraryOS · Kids Edition v2.1</p>
       </div>
     </div>
   );

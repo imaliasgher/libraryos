@@ -34,7 +34,7 @@ export function AdminStudents() {
     setForm({ name: "", studentCode: code, email: "", password: "", phone: "", department: "Computer Science", year: 1, status: "active", joined: new Date().toISOString().split("T")[0] });
     setModal("add");
   };
-  const openEdit    = (s: any) => { setForm({ ...s }); setSel(s); setModal("edit"); };
+  const openEdit    = (s: any) => { setForm({ ...s, password: "" }); setSel(s); setModal("edit"); };
   const openProfile = (s: any) => { setSel(s); setModal("profile"); };
 
   const save = async () => {
@@ -101,7 +101,14 @@ export function AdminStudents() {
                 </div>
               </div>
               <div style={{ color: C.textMid, fontSize: 12, marginBottom: 2 }}>🧒 Class: {s.department}</div>
-              <div style={{ color: C.textMid, fontSize: 12, marginBottom: 12 }}>🔑 Log in with: {s.studentCode}</div>
+              <div style={{ color: C.textMid, fontSize: 12, marginBottom: 4 }}>🔑 ID: {s.studentCode}</div>
+              {s.plainPassword && (
+                <div style={{ background: C.amberBg, padding: "4px 8px", borderRadius: 8, display: "inline-block", border: `1px solid ${C.amber}40`, marginBottom: 12 }}>
+                  <span style={{ color: C.textMid, fontSize: 10, fontWeight: 700, textTransform: "uppercase", display: "block" }}>Password</span>
+                  <span style={{ color: C.text, fontSize: 13, fontWeight: 800, letterSpacing: 0.5 }}>{s.plainPassword}</span>
+                </div>
+              )}
+
               <div style={{ display: "flex", gap: 6 }} onClick={e => e.stopPropagation()}>
                 <Btn variant="ghost" style={{ flex: 1, padding: "7px 10px", fontSize: 12 }} onClick={() => openEdit(s)}>✏️ Edit</Btn>
                 <Btn variant={s.status === "active" ? "danger" : "success"} style={{ flex: 1, padding: "7px 10px", fontSize: 12, boxShadow: "none" }} onClick={() => toggle(s)}>{s.status === "active" ? "Suspend" : "Activate"}</Btn>
@@ -127,10 +134,10 @@ export function AdminStudents() {
             </div>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-            {[["📧 Email", sel.email], ["📱 Phone", sel.phone || "—"], ["🏛️ Department", sel.department], ["📅 Joined", fmt(sel.joined)]].map(([k, v]) => (
-              <div key={k} style={{ padding: "10px 14px", background: C.inputBg, borderRadius: 11, border: `1px solid ${C.cardBorder}` }}>
+            {[["📧 Email", sel.email], ["📱 Phone", sel.phone || "—"], ["🏛️ Class", sel.department], ["🔑 Password", sel.plainPassword || "—"], ["📅 Joined", fmt(sel.joined)]].map(([k, v]) => (
+              <div key={k} style={{ padding: "10px 14px", background: k === "🔑 Password" ? C.amberBg : C.inputBg, borderRadius: 11, border: `1px solid ${k === "🔑 Password" ? C.amber + "50" : C.cardBorder}` }}>
                 <div style={{ color: C.textLight, fontSize: 11, marginBottom: 2 }}>{k}</div>
-                <div style={{ color: C.text, fontSize: 13, fontWeight: 600 }}>{v}</div>
+                <div style={{ color: C.text, fontSize: 13, fontWeight: 700 }}>{v}</div>
               </div>
             ))}
           </div>
@@ -144,7 +151,7 @@ export function AdminStudents() {
             <div style={{ gridColumn: "1/-1" }}><FInput label="Full Name" value={form.name} onChange={(e: any) => setForm((f: any) => ({ ...f, name: e.target.value }))} /></div>
             <FInput label="Student ID (Badge Number)" value={form.studentCode} onChange={(e: any) => setForm((f: any) => ({ ...f, studentCode: e.target.value }))} />
             <FInput label="Email (Optional for kids)" type="email" value={form.email} placeholder="Leave blank to auto-generate" onChange={(e: any) => setForm((f: any) => ({ ...f, email: e.target.value }))} />
-            {modal === "add" && <FInput label="Login Password" type="password" value={form.password} onChange={(e: any) => setForm((f: any) => ({ ...f, password: e.target.value }))} />}
+            <FInput label={modal === "add" ? "Login Password" : "Change Password"} type="text" value={form.password} placeholder={modal === "edit" ? "Leave blank to keep same" : "e.g. 1234"} onChange={(e: any) => setForm((f: any) => ({ ...f, password: e.target.value }))} />
             <FInput label="Parent's Phone" value={form.phone} onChange={(e: any) => setForm((f: any) => ({ ...f, phone: e.target.value }))} />
             <FSelect label="Class / Grade" value={form.department} onChange={(e: any) => setForm((f: any) => ({ ...f, department: e.target.value }))}>{DEPARTMENTS.map(d => <option key={d}>{d}</option>)}</FSelect>
             <FSelect label="Reading Level" value={form.year} onChange={(e: any) => setForm((f: any) => ({ ...f, year: e.target.value }))}>{[1, 2, 3, 4, 5].map(y => <option key={y} value={y}>Level {y}</option>)}</FSelect>
