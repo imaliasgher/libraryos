@@ -41,6 +41,8 @@ export async function POST(req: NextRequest) {
             studentCode: user.student.studentCode,
             avatar: user.student.avatar,
             department: user.student.department,
+            year: user.student.year,
+            status: user.student.status,
           }
         : {}),
     };

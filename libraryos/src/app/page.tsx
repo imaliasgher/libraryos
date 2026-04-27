@@ -47,7 +47,7 @@ function AdminApp() {
 
   return (
     <Shell nav={nav} page={page} setPage={setPage} sidebarBottom={sidebarBottom}>
-      {page === "dashboard"    && <AdminDashboard />}
+      {page === "dashboard"    && <AdminDashboard setPage={setPage} />}
       {page === "books"        && <AdminBooks />}
       {page === "students"     && <AdminStudents />}
       {page === "transactions" && <AdminTransactions />}

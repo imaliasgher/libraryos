@@ -1,14 +1,22 @@
 "use client";
 import { useEffect, useState } from "react";
 import { C, fmt, ACCENT_COLORS } from "@/lib/tokens";
-import { apiDashboard } from "@/lib/client";
-import { StatCard, Badge, Spinner } from "../shared/ui";
+import { apiDashboard, apiReturnBook } from "@/lib/client";
+import { StatCard, Badge, Spinner, Btn, useToast } from "../shared/ui";
 
-export function AdminDashboard() {
+export function AdminDashboard({ setPage }: { setPage: (p: string) => void }) {
   const [data, setData] = useState<any>(null);
+  const { toast, ToastContainer } = useToast();
 
-  useEffect(() => { apiDashboard().then(setData); }, []);
+  const load = () => apiDashboard().then(setData);
+  useEffect(() => { load(); }, []);
+
   if (!data) return <Spinner />;
+
+  const returnBook = async (id: number) => {
+    try { await apiReturnBook(id); await load(); toast("Book returned!"); }
+    catch (e: any) { toast(e.message, "err"); }
+  };
 
   const { stats, recentTransactions, overdue, genreCounts, lowStock } = data;
   const topGenres = Object.entries(genreCounts as Record<string, number>).sort((a: any, b: any) => b[1] - a[1]).slice(0, 5);
@@ -19,6 +27,7 @@ export function AdminDashboard() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+      <ToastContainer />
       <style>{`
         @media (max-width: 640px) {
           .dash-stat-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
@@ -26,9 +35,16 @@ export function AdminDashboard() {
           .dash-bottom-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
-      <div>
-        <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 30, color: C.text, fontWeight: 700 }}>{greeting}! 👋</h1>
-        <p style={{ margin: "6px 0 0", color: C.textLight, fontSize: 14 }}>{new Date().toLocaleDateString("en-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+        <div>
+          <h1 style={{ margin: 0, fontFamily: "'Lora',serif", fontSize: 30, color: C.text, fontWeight: 700 }}>{greeting}, Librarian! 👋</h1>
+          <p style={{ margin: "4px 0 0", color: C.textLight, fontSize: 14 }}>{new Date().toLocaleDateString("en-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
+        </div>
+        <div style={{ display: "flex", gap: 10 }}>
+          <button onClick={() => setPage("scanner")}      style={{ padding: "10px 16px", background: C.primary, color: "#fff", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>✨ Scan Book</button>
+          <button onClick={() => setPage("transactions")} style={{ padding: "10px 16px", background: "#fff", border: `1.5px solid ${C.cardBorder}`, color: C.text, borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>🔄 Issue / Return</button>
+          <button onClick={() => setPage("students")}     style={{ padding: "10px 16px", background: "#fff", border: `1.5px solid ${C.cardBorder}`, color: C.text, borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>🧒 New Member</button>
+        </div>
       </div>
 
       <div className="dash-stat-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16 }}>
@@ -49,12 +65,16 @@ export function AdminDashboard() {
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {recentTransactions.map((tx: any) => (
                 <div key={tx.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "9px 12px", background: C.inputBg, borderRadius: 11, border: `1px solid ${C.cardBorder}` }}>
-                  <span style={{ fontSize: 17 }}>{tx.type === "issue" ? "📤" : "📥"}</span>
+                  <span style={{ fontSize: 17 }}>{tx.type === "issue" && !tx.returnDate ? "📤" : "📥"}</span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ color: C.text, fontSize: 13, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{tx.bookTitle}</div>
                     <div style={{ color: C.textLight, fontSize: 11 }}>{tx.studentName} · {fmt(tx.date)}</div>
                   </div>
-                  <Badge color={tx.type === "issue" ? C.amber : C.green}>{tx.type}</Badge>
+                  {tx.type === "issue" && !tx.returnDate ? (
+                    <button onClick={() => returnBook(tx.id)} style={{ padding: "5px 12px", background: C.greenBg, color: C.green, border: `1px solid ${C.green}30`, borderRadius: 8, fontSize: 11, fontWeight: 800, cursor: "pointer" }}>Return</button>
+                  ) : (
+                    <Badge color={C.green}>Returned</Badge>
+                  )}
                 </div>
               ))}
             </div>

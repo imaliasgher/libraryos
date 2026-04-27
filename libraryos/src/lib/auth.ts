@@ -15,6 +15,8 @@ export interface JWTPayload {
   name: string;
   avatar?: string;
   department?: string;
+  year?: number;
+  status?: string;
 }
 
 export async function signToken(payload: JWTPayload): Promise<string> {
